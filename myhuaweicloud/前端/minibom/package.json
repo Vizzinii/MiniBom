@@ -1,0 +1,26 @@
+{
+  "name": "minibom",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
+    "axios": "^1.4.0",
+    "crypto-js": "^4.1.1",
+    "element-plus": "^2.3.8",
+    "pinia": "^2.1.4",
+    "pinia-persistedstate-plugin": "^0.1.0",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "sass": "^1.32.13",
+    "vite": "^4.4.0"
+  }
+}

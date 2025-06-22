@@ -1,0 +1,1036 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.coresdk.basic.vo;
+
+import com.huawei.iit.sdk.common.exception.RDMAppException;
+import com.huawei.iit.sdk.common.util.ApplicationContextUtil;
+import com.huawei.iit.sdk.common.util.CommonDbAdapter;
+import com.huawei.iit.sdk.common.util.JsonUtils;
+import com.huawei.innovation.rdm.bean.entity.VersionObject;
+import com.huawei.innovation.rdm.coresdk.basic.constraint.AttrConstraintRule;
+import com.huawei.innovation.rdm.coresdk.basic.enums.ConditionType;
+import com.huawei.innovation.rdm.coresdk.basic.enums.JoinerType;
+import com.huawei.innovation.rdm.coresdk.basic.exception.RDMCoreSDKConstant;
+import com.huawei.innovation.rdm.coresdk.basic.util.ClassUtil;
+import com.huawei.innovation.rdm.coresdk.basic.util.CommonUtils;
+import com.huawei.innovation.rdm.coresdk.basic.util.PersistUtil;
+import com.huawei.innovation.rdm.coresdk.basic.util.ThreadLocalUtil;
+import com.huawei.innovation.rdm.coresdk.extattrmgmt.EXATypeEnum;
+import com.huawei.innovation.rdm.coresdk.extattrmgmt.dto.EXADefinitionLinkInfo;
+import com.huawei.innovation.rdm.coresdk.persistence.constant.Constant;
+import com.huawei.innovation.rdm.coresdk.persistence.dao.JpaCrudDao;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Pattern.Flag;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
+
+@ApiModel
+@Schema
+public class QueryCondition {
+    public static final String SELF = "p";
+    public static final String EQUAL = "=";
+    public static final String LIKE = "like";
+    public static final String CUSTOM_LIKE = "customLike";
+    public static final String START_WITH = "startWith";
+    public static final String END_WITH = "endWith";
+    public static final String IN = "in";
+    public static final String NOT_IN = "not in";
+    public static final String LESS = "<";
+    public static final String GREATER = ">";
+    public static final String LESS_EQUAL = "<=";
+    public static final String GREATER_EQUAL = ">=";
+    public static final String NOT_EQUAL = "<>";
+    public static final String IS_NULL = "ISNULL";
+    public static final String NOT_NULL = "NOTNULL";
+    public static final String CONTAINS = "contains";
+    private static final String AND_KEY = "and";
+    private static final String OR_KEY = "or";
+    @ApiModelProperty("关联查询时被关联表的别名")
+    @Schema(
+        description = "关联查询时被关联表的别名"
+    )
+    private String joinTableAlias;
+    @ApiModelProperty("条件名-实体对象属性名")
+    @Schema(
+        description = "条件名-实体对象属性名"
+    )
+    private @Pattern(
+    regexp = "^[0-9a-zA-Z_.]{1,}$",
+    flags = {Flag.CASE_INSENSITIVE},
+    message = "Illegal attribute name! contain only alphabet, point, digit or underline."
+) String conditionName;
+    @ApiModelProperty("操作符（=，like,customLike(支持输入*或%的模糊查询),in,not in,<,>,>=,<=,<>,startWith,endWith,isnull,notnull,customLike,contains）")
+    @Schema(
+        description = "操作符（=，like,customLike(支持输入*或%的模糊查询),in,not in,<,>,>=,<=,<>,startWith,endWith,isnull,notnull,customLike,contains）"
+    )
+    private @Pattern(
+    regexp = "=|like|in|<|>|>=|<=|<>|isnull|notnull|customLike|startWith|endWith|not in",
+    flags = {Flag.CASE_INSENSITIVE},
+    message = "invalid operator! only support =|like|in|<|>|>=|<=|<>|isnull|notnull|customLike|startWith|endWith|not in"
+) String operator;
+    @ApiModelProperty("查询条件值(已过时)")
+    @Schema(
+        description = "查询条件值(已过时)"
+    )
+    private String conditionValue;
+    @ApiModelProperty("查询条件值，当operator为in或者属性约束为多值且operator为equal的情况是多值，其他情况都是单值")
+    @Schema(
+        description = "查询条件值，当operator为in或者属性约束为多值且operator为equal的情况是多值，其他情况都是单值"
+    )
+    private List<String> conditionValues;
+    @ApiModelProperty("是否忽略大小写，默认为否")
+    @Schema(
+        description = "是否忽略大小写，默认为否"
+    )
+    private Boolean ignoreStr;
+    @ApiModelProperty("连接符，只能为 or 、 and")
+    @Schema(
+        description = "连接符，只能为 or 、 and"
+    )
+    private @Pattern(
+    regexp = "and|or",
+    flags = {Flag.CASE_INSENSITIVE},
+    message = "invalid joiner! only support and|or"
+) String joiner;
+    @ApiModelProperty("查询条件列表。")
+    @Schema(
+        description = "查询条件列表。"
+    )
+    private List<QueryCondition> conditions;
+    @ApiModelProperty(
+        value = "是否为多值查询，默认为否",
+        hidden = true
+    )
+    @Schema(
+        description = "是否为多值查询，默认为否",
+        hidden = true
+    )
+    private boolean isMulti;
+    @ApiModelProperty(
+        value = "别名",
+        hidden = true
+    )
+    @Schema(
+        description = "别名",
+        hidden = true
+    )
+    private String conditionValueName;
+    @ApiModelProperty(
+        value = "扩展属性类型",
+        hidden = true
+    )
+    @Schema(
+        description = "扩展属性类型",
+        hidden = true
+    )
+    private EXATypeEnum exaTypeEnum;
+    @ApiModelProperty("当前condition对象的上一层级")
+    @Schema(
+        description = "当前condition对象的上一层级"
+    )
+    private QueryCondition preCondition;
+
+    public QueryCondition(String conditionName, String operator) {
+        this.ignoreStr = false;
+        this.conditionValues = new ArrayList();
+        this.conditionName = conditionName;
+        this.operator = operator;
+    }
+
+    public QueryCondition(String conditionName, String operator, String conditionValue) {
+        this.ignoreStr = false;
+        this.conditionValues = new ArrayList();
+        this.conditionName = conditionName;
+        this.operator = operator;
+        this.conditionValues.add(conditionValue);
+    }
+
+    public QueryCondition(String conditionName, String operator, List<String> conditionValue) {
+        this.ignoreStr = false;
+        this.conditionValues = new ArrayList();
+        this.conditionName = conditionName;
+        this.operator = operator;
+        this.conditionValues.addAll(conditionValue);
+    }
+
+    public QueryCondition(String conditionName, String operator, String conditionValue, boolean isIgnoreCase) {
+        this(conditionName, operator, conditionValue);
+        this.setIgnoreStr(isIgnoreCase);
+    }
+
+    public QueryCondition(String conditionName, String operator, List<String> conditionValue, boolean isIgnoreCase) {
+        this(conditionName, operator, conditionValue);
+        this.setIgnoreStr(isIgnoreCase);
+    }
+
+    public QueryCondition begin(@NotNull JoinerType joiner) {
+        QueryCondition condition = new QueryCondition();
+        condition.setJoiner(joiner.getJoiner());
+        condition.setPreCondition(this);
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(condition);
+        return condition;
+    }
+
+    public QueryCondition and() {
+        return this.begin(JoinerType.AND);
+    }
+
+    public QueryCondition or() {
+        return this.begin(JoinerType.OR);
+    }
+
+    public QueryCondition end() {
+        return this.preCondition;
+    }
+
+    public QueryCondition addCondition(String name, ConditionType operator) {
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(new QueryCondition(name, operator.getOper()));
+        return this;
+    }
+
+    public QueryCondition addCondition(String name, ConditionType operator, Object value) {
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        if (Objects.isNull(value)) {
+            if (!ConditionType.IS_NULL.equals(operator) && !ConditionType.NOT_NULL.equals(operator)) {
+                throw new RDMAppException(RDMCoreSDKConstant.ERROR_QUERY_CONDITION_VALUE_EMPTY);
+            } else {
+                this.conditions.add(new QueryCondition(name, operator.getOper()));
+                return this;
+            }
+        } else {
+            this.conditions.add(new QueryCondition(name, operator.getOper(), String.valueOf(value)));
+            return this;
+        }
+    }
+
+    public QueryCondition addCondition(String name, ConditionType operator, Object value, boolean isIgnoreCase) {
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(new QueryCondition(name, operator.getOper(), value.toString(), isIgnoreCase));
+        return this;
+    }
+
+    public QueryCondition addCondition(String name, ConditionType operator, List<Object> valueList) {
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(new QueryCondition(name, operator.getOper(), (List)valueList.stream().map(Object::toString).collect(Collectors.toList())));
+        return this;
+    }
+
+    public QueryCondition addCondition(String name, ConditionType operator, List<Object> valueList, boolean isIgnoreCase) {
+        if (Objects.isNull(this.conditions)) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(new QueryCondition(name, operator.getOper(), (List)valueList.stream().map(Object::toString).collect(Collectors.toList()), isIgnoreCase));
+        return this;
+    }
+
+    public List<QueryCondition> collectConditions() {
+        if (CollectionUtils.isEmpty(this.conditions)) {
+            List<QueryCondition> conditionList = new ArrayList();
+            if (StringUtils.isNotEmpty(this.conditionName)) {
+                conditionList.add(this);
+            }
+
+            return conditionList;
+        } else {
+            return this.collectConditions(new ArrayList());
+        }
+    }
+
+    private List<QueryCondition> collectConditions(List<QueryCondition> conditionList) {
+        if (CollectionUtils.isEmpty(this.conditions)) {
+            conditionList.add(this);
+            return conditionList;
+        } else {
+            Iterator var2 = this.conditions.iterator();
+
+            while(var2.hasNext()) {
+                QueryCondition queryCondition = (QueryCondition)var2.next();
+                queryCondition.collectConditions(conditionList);
+            }
+
+            return conditionList;
+        }
+    }
+
+    public String constructExpression(Map<String, Integer> map) {
+        return this.constructExpression(map, new HashMap(), (Class)null);
+    }
+
+    public String constructExpression(Map<String, Integer> map, Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap, Class clazz) {
+        return this.constructExpression(map, conditionNamedLinkInfoMap, clazz, false);
+    }
+
+    public String constructExpression(Map<String, Integer> map, Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap, Class clazz, boolean isSingleEntity) {
+        if (StringUtils.isEmpty(this.joiner)) {
+            return this.constructSingleExpression(map, conditionNamedLinkInfoMap, clazz, isSingleEntity);
+        } else {
+            if (!"and".equalsIgnoreCase(this.joiner) && !"or".equalsIgnoreCase(this.joiner)) {
+                this.joiner = "and";
+            }
+
+            List<String> expressions = new ArrayList();
+            if (CollectionUtils.isEmpty(this.conditions)) {
+                return "";
+            } else {
+                Iterator var6 = this.conditions.iterator();
+
+                while(var6.hasNext()) {
+                    QueryCondition condition = (QueryCondition)var6.next();
+                    String expression = condition.constructExpression(map, conditionNamedLinkInfoMap, clazz, isSingleEntity);
+                    if (!StringUtils.isEmpty(expression)) {
+                        expressions.add(expression);
+                    }
+                }
+
+                if (CollectionUtils.isEmpty(expressions)) {
+                    return null;
+                } else {
+                    expressions.removeAll(Collections.singleton((Object)null));
+                    return "(" + (String)expressions.stream().collect(Collectors.joining(" " + this.joiner + " ")) + ")";
+                }
+            }
+        }
+    }
+
+    private String constructSingleExpression(Map<String, Integer> map, Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap, Class clazz, boolean isSingleEntity) {
+        if (!StringUtils.isEmpty(this.conditionName) && !this.conditionName.equalsIgnoreCase("tenant.id") && !this.conditionName.equalsIgnoreCase("rdmDeleteFlag")) {
+            boolean isIgnore = this.ignoreStr && this.containsStr();
+            if (Objects.nonNull(clazz) && isIgnore) {
+                Class type = PersistUtil.getAttributeType(clazz, this.conditionName, conditionNamedLinkInfoMap);
+                isIgnore = String.class.equals(type);
+            }
+
+            String conditionValueNameTemp = this.conditionName.replaceAll("\\.", "");
+            if (!"ISNULL".equalsIgnoreCase(this.operator) && !"NOTNULL".equalsIgnoreCase(this.operator)) {
+                conditionValueNameTemp = this.processConditionValueName(conditionValueNameTemp, map);
+            }
+
+            this.setConditionValueName(conditionValueNameTemp);
+            this.parseAttrMultiConstraint(this.conditionName, clazz, false);
+            String conditionAliasName = isSingleEntity ? this.getSingleEntityConditionAliasName(conditionNamedLinkInfoMap, clazz) : this.getConditionAliasName(conditionNamedLinkInfoMap, clazz);
+            String result = this.getConditionSql(isIgnore, conditionAliasName, this.conditionValueName);
+            return "(" + result + ")";
+        } else {
+            return null;
+        }
+    }
+
+    private void parseAttrMultiConstraint(String conditionName, Class clazz, boolean isMaster) {
+        if (clazz != null) {
+            if (!conditionName.contains(".")) {
+                this.setMulti(PersistUtil.isJsonAttr(clazz, conditionName));
+            } else {
+                Class branchClass;
+                if (conditionName.startsWith("master.") && VersionObject.class.isAssignableFrom(clazz)) {
+                    branchClass = ClassUtil.getClass(clazz.getCanonicalName() + "Master");
+                    this.parseAttrMultiConstraint(conditionName.replaceFirst("master.", ""), branchClass, true);
+                }
+
+                if (conditionName.startsWith("branch.") && VersionObject.class.isAssignableFrom(clazz)) {
+                    branchClass = ClassUtil.getClass(clazz.getCanonicalName() + "Branch");
+                    this.parseAttrMultiConstraint(conditionName.replaceFirst("branch.", ""), branchClass, false);
+                }
+
+                List<EXADefinitionLinkInfo> exaDefinitionLinkInfos = ThreadLocalUtil.getExaDefinitionLinkInfos();
+                if (!CollectionUtils.isEmpty(exaDefinitionLinkInfos)) {
+                    Matcher matcher;
+                    String clsName;
+                    if ((matcher = Constant.EXT_ATTRS_PATTERN.matcher(conditionName)).matches()) {
+                        clsName = matcher.group(1);
+                        exaDefinitionLinkInfos.stream().filter((exa) -> {
+                            return exa.isMaster() == isMaster;
+                        }).filter((exa) -> {
+                            return EXATypeEnum.FILE.name().equals(exa.getExaType());
+                        }).filter((exa) -> {
+                            return exa.getAttrNameEn().equals(clsName);
+                        }).findFirst().ifPresent((exa) -> {
+                            this.setMulti(true);
+                            this.setExaTypeEnum(EXATypeEnum.FILE);
+                        });
+                    }
+
+                    if ((matcher = Constant.CLS_ATTR_PATTERN.matcher(conditionName)).matches()) {
+                        clsName = matcher.group(1);
+                        String attrName = matcher.group(3);
+                        if (attrName == null || clsName == null) {
+                            return;
+                        }
+
+                        this.setMultiConstraint(attrName);
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void setMultiConstraint(String attrName) {
+        JpaCrudDao jpaCrudDao = (JpaCrudDao)ApplicationContextUtil.getBean(JpaCrudDao.class);
+        Map<String, Object> params = new HashMap();
+        params.put("nameEn", attrName);
+        List<Map<String, Object>> exaDefinition = jpaCrudDao.findBySql("select p.constraint,p.type from xdm_exadefinition p where nameen = :nameEn", params);
+        if (!CollectionUtils.isEmpty(exaDefinition)) {
+            Map<String, Object> resultMap = (Map)exaDefinition.get(0);
+            if (resultMap != null) {
+                Optional.of(resultMap.get("constraint")).map(String::valueOf).ifPresent((constraint) -> {
+                    AttrConstraintRule attrConstraintRule = (AttrConstraintRule)JsonUtils.toObject(constraint, AttrConstraintRule.class);
+                    this.setMulti(attrConstraintRule.getMultiValue());
+                });
+                Optional.of(resultMap.get("type")).map(String::valueOf).ifPresent((type) -> {
+                    if (EXATypeEnum.DECIMAL_WITH_PRECISION.name().equals(type)) {
+                        this.setExaTypeEnum(EXATypeEnum.DECIMAL_WITH_PRECISION);
+                    }
+
+                    if (EXATypeEnum.FILE.name().equals(type)) {
+                        this.setExaTypeEnum(EXATypeEnum.FILE);
+                    }
+
+                    if (EXATypeEnum.DATETIME.name().equals(type)) {
+                        this.setExaTypeEnum(EXATypeEnum.DATETIME);
+                    }
+
+                });
+            }
+        }
+    }
+
+    private String getConditionSql(boolean isIgnore, String conditionAliasName, String conditionValueName) {
+        if (this.isMulti && !"ISNULL".equals(this.operator)) {
+            return conditionAliasName;
+        } else {
+            String result;
+            switch (this.operator) {
+                case "=":
+                case ">":
+                case "<":
+                case ">=":
+                case "<=":
+                case "<>":
+                case "in":
+                case "not in":
+                    if (isIgnore) {
+                        result = "UPPER(" + conditionAliasName + ") " + this.operator + " :" + conditionValueName;
+                    } else {
+                        result = conditionAliasName + " " + this.operator + " :" + conditionValueName;
+                    }
+                    break;
+                case "like":
+                case "startWith":
+                case "endWith":
+                case "customLike":
+                    String dbType = ApplicationContextUtil.getStringProperty("RDS_TYPE", "");
+                    String likeEscape = CommonDbAdapter.of(dbType).likeEscape();
+                    if (isIgnore) {
+                        result = "UPPER(" + conditionAliasName + ") like :" + conditionValueName + likeEscape;
+                    } else {
+                        result = conditionAliasName + " like :" + conditionValueName + likeEscape;
+                    }
+                    break;
+                case "ISNULL":
+                    result = conditionAliasName + " is null";
+                    break;
+                case "NOTNULL":
+                    result = conditionAliasName + " is not null";
+                    break;
+                default:
+                    throw new RDMAppException("queryCondition.operator.not.valid", new Object[]{this.operator});
+            }
+
+            return result;
+        }
+    }
+
+    private String getConditionAliasName(Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap, Class clazz) {
+        String jsonAttrName = "";
+        String decimalAttrName = "";
+        if (Objects.nonNull(clazz)) {
+            jsonAttrName = PersistUtil.getJsonConditionAttrName(clazz, this.conditionName);
+            decimalAttrName = PersistUtil.getDecimalWithPrecisionConditionAttrName(clazz, this.conditionName);
+        }
+
+        java.util.regex.Pattern extAttrPattern = java.util.regex.Pattern.compile("extAttrs\\.([0-9a-zA-Z_\\s]+)(\\.(value|id))?");
+        java.util.regex.Pattern masterExtAttrPattern = java.util.regex.Pattern.compile("master.extAttrs+\\.([0-9a-zA-Z_\\s]+)(\\.(value|id))?");
+        java.util.regex.Pattern masterPattern = java.util.regex.Pattern.compile("master(\\.[0-9a-zA-Z_]{1,100}){1,10}");
+        java.util.regex.Pattern refPattern = java.util.regex.Pattern.compile("^[0-9a-zA-Z_]+\\.[0-9a-zA-Z_]+");
+        if (!extAttrPattern.matcher(this.conditionName).matches() && !masterExtAttrPattern.matcher(this.conditionName).matches()) {
+            if (StringUtils.isNotEmpty(decimalAttrName)) {
+                return PersistUtil.getDecimalWithPrecisionAttrCondition(decimalAttrName, this.conditionName);
+            } else if (StringUtils.isNotEmpty(jsonAttrName)) {
+                return PersistUtil.getJsonAttrCondition(jsonAttrName, this);
+            } else if (validateRefMasterOrBranch(this.conditionName)) {
+                return "_" + this.conditionName.replaceFirst("\\.", "_");
+            } else if (refPattern.matcher(this.conditionName).matches() && !CommonUtils.referenceCondition(this.conditionName)) {
+                return "_" + this.conditionName;
+            } else {
+                return masterPattern.matcher(this.conditionName).matches() ? this.getMasterConditionAliasName(CommonUtils.referenceCondition(this.conditionName)) : this.getDefaultConditionAliasName();
+            }
+        } else {
+            return this.getExtAttrConditionAliasName(conditionNamedLinkInfoMap);
+        }
+    }
+
+    private String getSingleEntityConditionAliasName(Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap, Class clazz) {
+        String jsonAttrName = "";
+        if (Objects.nonNull(clazz)) {
+            jsonAttrName = PersistUtil.getJsonConditionAttrName(clazz, this.conditionName);
+        }
+
+        java.util.regex.Pattern extAttrPattern = java.util.regex.Pattern.compile("extAttrs\\.([0-9a-zA-Z_\\s]+)(\\.(value|id))?");
+        if (extAttrPattern.matcher(this.conditionName).matches()) {
+            return this.getExtAttrConditionAliasName(conditionNamedLinkInfoMap);
+        } else {
+            return StringUtils.isNotEmpty(jsonAttrName) ? PersistUtil.getJsonAttrCondition(jsonAttrName, this.conditionName) : "p." + this.conditionName;
+        }
+    }
+
+    public static boolean validateRefMasterOrBranch(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return false;
+        } else {
+            String[] split = value.split("\\.");
+            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("[0-9a-zA-Z_]+");
+            if (pattern.matcher(split[0]).matches() && split.length >= 3) {
+                if (!"master".equals(split[1]) && !"branch".equals(split[1])) {
+                    return false;
+                } else {
+                    for(int i = 2; i < split.length; ++i) {
+                        if (!pattern.matcher(split[i]).matches()) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            } else {
+                return false;
+            }
+        }
+    }
+
+    private String getExtAttrConditionAliasName(Map<String, List<EXADefinitionLinkInfo>> conditionNamedLinkInfoMap) {
+        if (conditionNamedLinkInfoMap.containsKey(this.conditionName) && !CollectionUtils.isEmpty((Collection)conditionNamedLinkInfoMap.get(this.conditionName)) && !StringUtils.isEmpty(((EXADefinitionLinkInfo)((List)conditionNamedLinkInfoMap.get(this.conditionName)).get(0)).getActColumnName())) {
+            return this.isMulti ? PersistUtil.extractJsonQuerySql(this, ((EXADefinitionLinkInfo)((List)conditionNamedLinkInfoMap.get(this.conditionName)).get(0)).getActColumnName(), "") : ((EXADefinitionLinkInfo)((List)conditionNamedLinkInfoMap.get(this.conditionName)).get(0)).getActColumnName();
+        } else {
+            throw new RDMAppException(RDMCoreSDKConstant.ERROR_QUERY_EXA_ATTR, new Object[]{this.conditionName});
+        }
+    }
+
+    private String getMasterConditionAliasName(boolean isReferenceCon) {
+        return isReferenceCon ? "_" + this.conditionName : "_" + this.conditionName.replaceFirst("\\.", "");
+    }
+
+    private String getDefaultConditionAliasName() {
+        int size = this.conditionName.split("\\.").length;
+        if (size == 3) {
+            return "_" + this.conditionName;
+        } else if (size > 3) {
+            return "_" + this.conditionName.replaceFirst("\\.", "");
+        } else {
+            return StringUtils.isEmpty(this.joinTableAlias) ? "p." + this.conditionName : this.joinTableAlias + "." + this.conditionName;
+        }
+    }
+
+    private String processConditionValueName(String conditionValueName, Map<String, Integer> map) {
+        if (map.get(conditionValueName) == null) {
+            map.put(conditionValueName, 1);
+        } else {
+            map.put(conditionValueName, (Integer)map.get(conditionValueName) + 1);
+        }
+
+        return conditionValueName + map.get(conditionValueName);
+    }
+
+    public void addConditionValue(String conditionValue) {
+        if (this.conditionValues == null) {
+            this.conditionValues = new ArrayList();
+        }
+
+        this.conditionValues.add(conditionValue);
+    }
+
+    public void addConditionValue(List<String> conditionValues) {
+        this.conditionValues.addAll(conditionValues);
+    }
+
+    public void addCondition(QueryCondition queryCondition) {
+        if (this.conditions == null) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.add(queryCondition);
+    }
+
+    public void addCondition(List<QueryCondition> list) {
+        if (this.conditions == null) {
+            this.conditions = new ArrayList();
+        }
+
+        this.conditions.addAll(list);
+    }
+
+    public boolean containsStr() {
+        return CollectionUtils.isEmpty(this.conditionValues) ? false : this.conditionValues.stream().filter(Objects::nonNull).anyMatch((value) -> {
+            for(int i = 0; i < value.length(); ++i) {
+                if (Character.isLetter(value.charAt(i))) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    private static Boolean $default$ignoreStr() {
+        return false;
+    }
+
+    public static QueryConditionBuilder builder() {
+        return new QueryConditionBuilder();
+    }
+
+    public String getJoinTableAlias() {
+        return this.joinTableAlias;
+    }
+
+    public String getConditionName() {
+        return this.conditionName;
+    }
+
+    public String getOperator() {
+        return this.operator;
+    }
+
+    public String getConditionValue() {
+        return this.conditionValue;
+    }
+
+    public List<String> getConditionValues() {
+        return this.conditionValues;
+    }
+
+    public Boolean getIgnoreStr() {
+        return this.ignoreStr;
+    }
+
+    public String getJoiner() {
+        return this.joiner;
+    }
+
+    public List<QueryCondition> getConditions() {
+        return this.conditions;
+    }
+
+    public boolean isMulti() {
+        return this.isMulti;
+    }
+
+    public String getConditionValueName() {
+        return this.conditionValueName;
+    }
+
+    public EXATypeEnum getExaTypeEnum() {
+        return this.exaTypeEnum;
+    }
+
+    public QueryCondition getPreCondition() {
+        return this.preCondition;
+    }
+
+    public void setJoinTableAlias(String joinTableAlias) {
+        this.joinTableAlias = joinTableAlias;
+    }
+
+    public void setConditionName(String conditionName) {
+        this.conditionName = conditionName;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
+    }
+
+    public void setConditionValue(String conditionValue) {
+        this.conditionValue = conditionValue;
+    }
+
+    public void setConditionValues(List<String> conditionValues) {
+        this.conditionValues = conditionValues;
+    }
+
+    public void setIgnoreStr(Boolean ignoreStr) {
+        this.ignoreStr = ignoreStr;
+    }
+
+    public void setJoiner(String joiner) {
+        this.joiner = joiner;
+    }
+
+    public void setConditions(List<QueryCondition> conditions) {
+        this.conditions = conditions;
+    }
+
+    public void setMulti(boolean isMulti) {
+        this.isMulti = isMulti;
+    }
+
+    public void setConditionValueName(String conditionValueName) {
+        this.conditionValueName = conditionValueName;
+    }
+
+    public void setExaTypeEnum(EXATypeEnum exaTypeEnum) {
+        this.exaTypeEnum = exaTypeEnum;
+    }
+
+    public void setPreCondition(QueryCondition preCondition) {
+        this.preCondition = preCondition;
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof QueryCondition)) {
+            return false;
+        } else {
+            QueryCondition other = (QueryCondition)o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else if (this.isMulti() != other.isMulti()) {
+                return false;
+            } else {
+                label145: {
+                    Object this$ignoreStr = this.getIgnoreStr();
+                    Object other$ignoreStr = other.getIgnoreStr();
+                    if (this$ignoreStr == null) {
+                        if (other$ignoreStr == null) {
+                            break label145;
+                        }
+                    } else if (this$ignoreStr.equals(other$ignoreStr)) {
+                        break label145;
+                    }
+
+                    return false;
+                }
+
+                Object this$joinTableAlias = this.getJoinTableAlias();
+                Object other$joinTableAlias = other.getJoinTableAlias();
+                if (this$joinTableAlias == null) {
+                    if (other$joinTableAlias != null) {
+                        return false;
+                    }
+                } else if (!this$joinTableAlias.equals(other$joinTableAlias)) {
+                    return false;
+                }
+
+                Object this$conditionName = this.getConditionName();
+                Object other$conditionName = other.getConditionName();
+                if (this$conditionName == null) {
+                    if (other$conditionName != null) {
+                        return false;
+                    }
+                } else if (!this$conditionName.equals(other$conditionName)) {
+                    return false;
+                }
+
+                label124: {
+                    Object this$operator = this.getOperator();
+                    Object other$operator = other.getOperator();
+                    if (this$operator == null) {
+                        if (other$operator == null) {
+                            break label124;
+                        }
+                    } else if (this$operator.equals(other$operator)) {
+                        break label124;
+                    }
+
+                    return false;
+                }
+
+                Object this$conditionValue = this.getConditionValue();
+                Object other$conditionValue = other.getConditionValue();
+                if (this$conditionValue == null) {
+                    if (other$conditionValue != null) {
+                        return false;
+                    }
+                } else if (!this$conditionValue.equals(other$conditionValue)) {
+                    return false;
+                }
+
+                Object this$conditionValues = this.getConditionValues();
+                Object other$conditionValues = other.getConditionValues();
+                if (this$conditionValues == null) {
+                    if (other$conditionValues != null) {
+                        return false;
+                    }
+                } else if (!this$conditionValues.equals(other$conditionValues)) {
+                    return false;
+                }
+
+                label103: {
+                    Object this$joiner = this.getJoiner();
+                    Object other$joiner = other.getJoiner();
+                    if (this$joiner == null) {
+                        if (other$joiner == null) {
+                            break label103;
+                        }
+                    } else if (this$joiner.equals(other$joiner)) {
+                        break label103;
+                    }
+
+                    return false;
+                }
+
+                Object this$conditions = this.getConditions();
+                Object other$conditions = other.getConditions();
+                if (this$conditions == null) {
+                    if (other$conditions != null) {
+                        return false;
+                    }
+                } else if (!this$conditions.equals(other$conditions)) {
+                    return false;
+                }
+
+                label89: {
+                    Object this$conditionValueName = this.getConditionValueName();
+                    Object other$conditionValueName = other.getConditionValueName();
+                    if (this$conditionValueName == null) {
+                        if (other$conditionValueName == null) {
+                            break label89;
+                        }
+                    } else if (this$conditionValueName.equals(other$conditionValueName)) {
+                        break label89;
+                    }
+
+                    return false;
+                }
+
+                Object this$exaTypeEnum = this.getExaTypeEnum();
+                Object other$exaTypeEnum = other.getExaTypeEnum();
+                if (this$exaTypeEnum == null) {
+                    if (other$exaTypeEnum != null) {
+                        return false;
+                    }
+                } else if (!this$exaTypeEnum.equals(other$exaTypeEnum)) {
+                    return false;
+                }
+
+                Object this$preCondition = this.getPreCondition();
+                Object other$preCondition = other.getPreCondition();
+                if (this$preCondition == null) {
+                    if (other$preCondition == null) {
+                        return true;
+                    }
+                } else if (this$preCondition.equals(other$preCondition)) {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof QueryCondition;
+    }
+
+    public int hashCode() {
+        int PRIME = true;
+        int result = 1;
+        result = result * 59 + (this.isMulti() ? 79 : 97);
+        Object $ignoreStr = this.getIgnoreStr();
+        result = result * 59 + ($ignoreStr == null ? 43 : $ignoreStr.hashCode());
+        Object $joinTableAlias = this.getJoinTableAlias();
+        result = result * 59 + ($joinTableAlias == null ? 43 : $joinTableAlias.hashCode());
+        Object $conditionName = this.getConditionName();
+        result = result * 59 + ($conditionName == null ? 43 : $conditionName.hashCode());
+        Object $operator = this.getOperator();
+        result = result * 59 + ($operator == null ? 43 : $operator.hashCode());
+        Object $conditionValue = this.getConditionValue();
+        result = result * 59 + ($conditionValue == null ? 43 : $conditionValue.hashCode());
+        Object $conditionValues = this.getConditionValues();
+        result = result * 59 + ($conditionValues == null ? 43 : $conditionValues.hashCode());
+        Object $joiner = this.getJoiner();
+        result = result * 59 + ($joiner == null ? 43 : $joiner.hashCode());
+        Object $conditions = this.getConditions();
+        result = result * 59 + ($conditions == null ? 43 : $conditions.hashCode());
+        Object $conditionValueName = this.getConditionValueName();
+        result = result * 59 + ($conditionValueName == null ? 43 : $conditionValueName.hashCode());
+        Object $exaTypeEnum = this.getExaTypeEnum();
+        result = result * 59 + ($exaTypeEnum == null ? 43 : $exaTypeEnum.hashCode());
+        Object $preCondition = this.getPreCondition();
+        result = result * 59 + ($preCondition == null ? 43 : $preCondition.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "QueryCondition(joinTableAlias=" + this.getJoinTableAlias() + ", conditionName=" + this.getConditionName() + ", operator=" + this.getOperator() + ", conditionValue=" + this.getConditionValue() + ", conditionValues=" + this.getConditionValues() + ", ignoreStr=" + this.getIgnoreStr() + ", joiner=" + this.getJoiner() + ", conditions=" + this.getConditions() + ", isMulti=" + this.isMulti() + ", conditionValueName=" + this.getConditionValueName() + ", exaTypeEnum=" + this.getExaTypeEnum() + ", preCondition=" + this.getPreCondition() + ")";
+    }
+
+    public QueryCondition() {
+        this.ignoreStr = false;
+        this.conditionValues = new ArrayList();
+        this.ignoreStr = $default$ignoreStr();
+    }
+
+    public QueryCondition(String joinTableAlias, String conditionName, String operator, String conditionValue, List<String> conditionValues, Boolean ignoreStr, String joiner, List<QueryCondition> conditions, boolean isMulti, String conditionValueName, EXATypeEnum exaTypeEnum, QueryCondition preCondition) {
+        this.ignoreStr = false;
+        this.conditionValues = new ArrayList();
+        this.joinTableAlias = joinTableAlias;
+        this.conditionName = conditionName;
+        this.operator = operator;
+        this.conditionValue = conditionValue;
+        this.conditionValues = conditionValues;
+        this.ignoreStr = ignoreStr;
+        this.joiner = joiner;
+        this.conditions = conditions;
+        this.isMulti = isMulti;
+        this.conditionValueName = conditionValueName;
+        this.exaTypeEnum = exaTypeEnum;
+        this.preCondition = preCondition;
+    }
+
+    public static class QueryConditionBuilder {
+        private String joinTableAlias;
+        private String conditionName;
+        private String operator;
+        private String conditionValue;
+        private List<String> conditionValues;
+        private boolean ignoreStr$set;
+        private Boolean ignoreStr$value;
+        private String joiner;
+        private List<QueryCondition> conditions;
+        private boolean isMulti;
+        private String conditionValueName;
+        private EXATypeEnum exaTypeEnum;
+        private QueryCondition preCondition;
+
+        public QueryConditionBuilder addCondition(QueryCondition queryCondition) {
+            if (CollectionUtils.isEmpty(this.conditions)) {
+                this.conditions = new ArrayList();
+            }
+
+            this.conditions.add(queryCondition);
+            return this;
+        }
+
+        public QueryConditionBuilder addConditionValue(String value) {
+            if (Objects.isNull(this.conditionValues)) {
+                this.conditionValues = new ArrayList();
+            }
+
+            this.conditionValues.add(value);
+            return this;
+        }
+
+        QueryConditionBuilder() {
+        }
+
+        public QueryConditionBuilder joinTableAlias(String joinTableAlias) {
+            this.joinTableAlias = joinTableAlias;
+            return this;
+        }
+
+        public QueryConditionBuilder conditionName(String conditionName) {
+            this.conditionName = conditionName;
+            return this;
+        }
+
+        public QueryConditionBuilder operator(String operator) {
+            this.operator = operator;
+            return this;
+        }
+
+        public QueryConditionBuilder conditionValue(String conditionValue) {
+            this.conditionValue = conditionValue;
+            return this;
+        }
+
+        public QueryConditionBuilder conditionValues(List<String> conditionValues) {
+            this.conditionValues = conditionValues;
+            return this;
+        }
+
+        public QueryConditionBuilder ignoreStr(Boolean ignoreStr) {
+            this.ignoreStr$value = ignoreStr;
+            this.ignoreStr$set = true;
+            return this;
+        }
+
+        public QueryConditionBuilder joiner(String joiner) {
+            this.joiner = joiner;
+            return this;
+        }
+
+        public QueryConditionBuilder conditions(List<QueryCondition> conditions) {
+            this.conditions = conditions;
+            return this;
+        }
+
+        public QueryConditionBuilder isMulti(boolean isMulti) {
+            this.isMulti = isMulti;
+            return this;
+        }
+
+        public QueryConditionBuilder conditionValueName(String conditionValueName) {
+            this.conditionValueName = conditionValueName;
+            return this;
+        }
+
+        public QueryConditionBuilder exaTypeEnum(EXATypeEnum exaTypeEnum) {
+            this.exaTypeEnum = exaTypeEnum;
+            return this;
+        }
+
+        public QueryConditionBuilder preCondition(QueryCondition preCondition) {
+            this.preCondition = preCondition;
+            return this;
+        }
+
+        public QueryCondition build() {
+            Boolean ignoreStr$value = this.ignoreStr$value;
+            if (!this.ignoreStr$set) {
+                ignoreStr$value = QueryCondition.$default$ignoreStr();
+            }
+
+            return new QueryCondition(this.joinTableAlias, this.conditionName, this.operator, this.conditionValue, this.conditionValues, ignoreStr$value, this.joiner, this.conditions, this.isMulti, this.conditionValueName, this.exaTypeEnum, this.preCondition);
+        }
+
+        public String toString() {
+            return "QueryCondition.QueryConditionBuilder(joinTableAlias=" + this.joinTableAlias + ", conditionName=" + this.conditionName + ", operator=" + this.operator + ", conditionValue=" + this.conditionValue + ", conditionValues=" + this.conditionValues + ", ignoreStr$value=" + this.ignoreStr$value + ", joiner=" + this.joiner + ", conditions=" + this.conditions + ", isMulti=" + this.isMulti + ", conditionValueName=" + this.conditionValueName + ", exaTypeEnum=" + this.exaTypeEnum + ", preCondition=" + this.preCondition + ")";
+        }
+    }
+}

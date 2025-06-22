@@ -1,0 +1,154 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.minibomdatamodel.bean.enumerate;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.huawei.iit.sdk.common.exception.RDMAppException;
+import com.huawei.innovation.rdm.bean.interfaces.Enumerator;
+import com.huawei.innovation.rdm.coresdk.annotation.DesignEnumType;
+import com.huawei.innovation.rdm.coresdk.basic.exception.RDMCoreSDKConstant;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+@JsonFormat(
+    shape = Shape.OBJECT
+)
+@DesignEnumType(
+    enumTypeNameCn = "PartSouce"
+)
+public enum PartSource2 implements Enumerator {
+    PartSource("PartSource", "PartSource", "PartSource", "PartSource"),
+    Buy("Buy", "购买", "Buy", "Buy"),
+    Make("Make", "制造", "Make", "Make"),
+    Buy_SingleSource("Buy_SingleSource", "购买-单一供应源", "Buy_SingleSource", "Buy_SingleSource");
+
+    String code;
+    String cnName;
+    String enName;
+    @JsonValue
+    String alias;
+
+    private PartSource2(String code, String cnName, String enName, String alias) {
+        this.code = code;
+        this.cnName = cnName;
+        this.enName = enName;
+        this.alias = alias;
+    }
+
+    @JsonCreator
+    public static PartSource2 getItem(Object alias) {
+        PartSource2[] var1 = values();
+        int var2 = var1.length;
+
+        for(int var3 = 0; var3 < var2; ++var3) {
+            PartSource2 item = var1[var3];
+            if (item.getAlias().equals(alias)) {
+                return item;
+            }
+        }
+
+        throw new RDMAppException(RDMCoreSDKConstant.ERROR_INVALID_ENUM_ALIAS, new Object[]{"PartSource2", alias, Arrays.stream(values()).map((per) -> {
+            return per.getAlias();
+        }).collect(Collectors.toList())});
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public String getCnName() {
+        return this.cnName;
+    }
+
+    public String getEnName() {
+        return this.enName;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+}
+
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.minibomdatamodel.bean.enumerate;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
+import com.huawei.iit.sdk.common.exception.RDMAppException;
+import com.huawei.innovation.rdm.bean.interfaces.Enumerator;
+import com.huawei.innovation.rdm.coresdk.annotation.DesignEnumType;
+import com.huawei.innovation.rdm.coresdk.basic.exception.RDMCoreSDKConstant;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+@JsonFormat(
+    shape = Shape.OBJECT
+)
+@DesignEnumType(
+    enumTypeNameCn = "AssemblyMode"
+)
+public enum AssemblyMode implements Enumerator {
+    AssemblyMode("AssemblyMode", "AssemblyMode", "AssemblyMode", "AssemblyMode"),
+    Part("Part", "零件", "Part", "Part"),
+    Separable("Separable", "可分离", "Separable", "Separable"),
+    Inseparable("Inseparable", "不可分离", "Inseparable", "Inseparable");
+
+    String code;
+    String cnName;
+    String enName;
+    @JsonValue
+    String alias;
+
+    private AssemblyMode(String code, String cnName, String enName, String alias) {
+        this.code = code;
+        this.cnName = cnName;
+        this.enName = enName;
+        this.alias = alias;
+    }
+
+    @JsonCreator
+    public static AssemblyMode getItem(Object alias) {
+        AssemblyMode[] var1 = values();
+        int var2 = var1.length;
+
+        for(int var3 = 0; var3 < var2; ++var3) {
+            AssemblyMode item = var1[var3];
+            if (item.getAlias().equals(alias)) {
+                return item;
+            }
+        }
+
+        throw new RDMAppException(RDMCoreSDKConstant.ERROR_INVALID_ENUM_ALIAS, new Object[]{"AssemblyMode", alias, Arrays.stream(values()).map((per) -> {
+            return per.getAlias();
+        }).collect(Collectors.toList())});
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public String getCnName() {
+        return this.cnName;
+    }
+
+    public String getEnName() {
+        return this.enName;
+    }
+
+    public String getAlias() {
+        return this.alias;
+    }
+}

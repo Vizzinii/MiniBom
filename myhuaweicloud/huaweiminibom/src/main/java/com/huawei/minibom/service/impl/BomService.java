@@ -40,11 +40,11 @@ import java.util.*;
 public class BomService implements IBomService {
 
     private static final Logger logger = LoggerFactory.getLogger(BomService.class);
-    
+
     // 用于缓存BOM链接的父子关系，假设在查询时构建
     private Map<Long, List<BOMLinkViewDTO>> parentToChildrenMap = new HashMap<>();
     private Map<Long, Integer> levelCache = new HashMap<>();
-    
+
     /**
      * 计算BOM链接的层级
      * @param bomLink BOM链接DTO
@@ -54,7 +54,7 @@ public class BomService implements IBomService {
         if (levelCache.containsKey(bomLink.getId())) {
             return levelCache.get(bomLink.getId());
         }
-        
+
         int level = 1;
         Long sourceId = bomLink.getSource().getId();
         // 查找是否有父级BOM链接（即target.id等于当前source.id的链接）
@@ -64,17 +64,17 @@ public class BomService implements IBomService {
         parentCondition.addCondition("target.id", ConditionType.EQUAL, sourceId);
         parentQuery.setFilter(parentCondition);
         List<BOMLinkViewDTO> parentLinks = bomLinkDelegator.find(parentQuery, new RDMPageVO());
-        
+
         if (parentLinks != null && !parentLinks.isEmpty()) {
             // 取第一个父链接计算层级（假设单父结构）
             BOMLinkViewDTO parentLink = parentLinks.get(0);
             level = calculateLevel(parentLink) + 1;
         }
-        
+
         levelCache.put(bomLink.getId(), level);
         return level;
     }
-    
+
     /**
      * 计算BOM列表中的最大层级
      * @param bomList BOM链接列表
@@ -90,7 +90,7 @@ public class BomService implements IBomService {
         }
         return maxLevel;
     }
-    
+
     /**
      * 计算单位数量，假设与quantity相同或根据业务逻辑调整
      * @param bomLink BOM链接DTO
@@ -100,7 +100,7 @@ public class BomService implements IBomService {
         // 假设单位数量等于quantity，实际业务逻辑可能需要根据层级或父子关系计算
         return bomLink.getQuantity().doubleValue();
     }
-    
+
     /**
      * 构建子层级BOM结构
      * @param targetId 目标ID，作为子节点的源ID
@@ -114,7 +114,7 @@ public class BomService implements IBomService {
         childCondition.addCondition("source.id", ConditionType.EQUAL, targetId);
         childQuery.setFilter(childCondition);
         List<BOMLinkViewDTO> childLinks = bomLinkDelegator.find(childQuery, new RDMPageVO());
-        
+
         if (childLinks != null && !childLinks.isEmpty()) {
             for (BOMLinkViewDTO childLink : childLinks) {
                 Map<String, Object> childItem = new HashMap<>();
@@ -175,29 +175,29 @@ public class BomService implements IBomService {
 
     @Override
     public ReturnResult createBomLink(BomLinkCreateVO bomLinkCreateVO) {
-        logger.info("BomService.createBomLink - 创建BOM关系开始，源ID: {}, 目标ID: {}", 
-            bomLinkCreateVO.getBomLink().getSource(), bomLinkCreateVO.getBomLink().getTarget());
-        
+        logger.info("BomService.createBomLink - 创建BOM关系开始，源ID: {}, 目标ID: {}",
+                bomLinkCreateVO.getBomLink().getSource(), bomLinkCreateVO.getBomLink().getTarget());
+
         // 第一阶段：创建BOM链接
         logger.info("BomService.createBomLink 第一阶段 - 开始创建BOMLink");
         BOMLinkCreateDTO createDTO = new BOMLinkCreateDTO();
         ObjectReferenceParamDTO sourceRef = new ObjectReferenceParamDTO();
         sourceRef.setId(bomLinkCreateVO.getBomLink().getSource());
         createDTO.setSource(sourceRef);
-        
+
         ObjectReferenceParamDTO targetRef = new ObjectReferenceParamDTO();
         targetRef.setId(bomLinkCreateVO.getBomLink().getTarget());
         createDTO.setTarget(targetRef);
-        
+
         createDTO.setQuantity(new BigDecimal(bomLinkCreateVO.getBomLink().getQuantity().toString()));
         if (bomLinkCreateVO.getBomLink().getSequenceNumber() != null) {
             createDTO.setSequenceNumber(bomLinkCreateVO.getBomLink().getSequenceNumber());
         }
         BOMLinkViewDTO viewDTO = bomLinkDelegator.create(createDTO);
-        
+
         // 第二阶段：如果有参考标识符，创建BOMUsesOccurrence
-        if (bomLinkCreateVO.getBomUsesOccurrence() != null && 
-            bomLinkCreateVO.getBomUsesOccurrence().getReferenceDesignator() != null) {
+        if (bomLinkCreateVO.getBomUsesOccurrence() != null &&
+                bomLinkCreateVO.getBomUsesOccurrence().getReferenceDesignator() != null) {
             logger.info("BomService.createBomLink 第二阶段 - 开始创建BOMUsesOccurrence");
             BOMUsesOccurrenceCreateDTO occurrenceDTO = new BOMUsesOccurrenceCreateDTO();
             ObjectReferenceParamDTO bomLinkRef = new ObjectReferenceParamDTO();
@@ -206,7 +206,7 @@ public class BomService implements IBomService {
             occurrenceDTO.setReferenceDesignator(bomLinkCreateVO.getBomUsesOccurrence().getReferenceDesignator());
             bomUsesOccurrenceDelegator.create(occurrenceDTO);
         }
-        
+
         logger.info("BomService.createBomLink - 创建BOM关系成功，BOM链接ID: {}", viewDTO != null ? viewDTO.getId() : "未知");
         // 构建符合初始任务描述的响应结构
         Map<String, Object> data = new HashMap<>();
@@ -237,13 +237,13 @@ public class BomService implements IBomService {
         if (queryVO.getLevels() != null) {
             // 可以通过层级限制来控制查询深度，当前实现暂不处理
         }
-        
+
         // 获取BOM树数据 - 仅获取直接子节点，子节点的子节点通过buildChildren方法递归获取
         List<BOMLinkViewDTO> bomTree = bomLinkDelegator.find(queryRequestVo, pageVO);
         if (bomTree == null) {
             bomTree = new ArrayList<>();
         }
-        
+
         logger.info("BomService.getBomTree - 查询BOM树结构完成，找到 {} 条记录", bomTree.size());
         // 构建符合初始任务描述的响应结构
         Map<String, Object> data = new HashMap<>();
@@ -331,7 +331,7 @@ public class BomService implements IBomService {
         queryCondition.setJoiner("and");
         queryCondition.addCondition("source.id", ConditionType.EQUAL, queryVO.getVersionId());
         queryRequestVo.setFilter(queryCondition);
-        
+
         // 设置分页参数，如果需要
         RDMPageVO pageVO = new RDMPageVO();
         // 如果需要递归查询所有层级，可以设置相关条件
@@ -343,7 +343,7 @@ public class BomService implements IBomService {
             // 非递归查询，仅获取直接子节点
             bomList = bomLinkDelegator.find(queryRequestVo, pageVO);
         }
-        
+
         if (bomList == null) {
             bomList = new ArrayList<>();
         }
@@ -404,7 +404,7 @@ public class BomService implements IBomService {
         data.put("items", items);
         return new ReturnResult(200, "查询BOM清单成功", data);
     }
-    
+
     /**
      * 递归获取所有层级的BOM链接
      * @param sourceId 源ID
@@ -417,7 +417,7 @@ public class BomService implements IBomService {
         queryCondition.addCondition("source.id", ConditionType.EQUAL, sourceId);
         queryRequestVo.setFilter(queryCondition);
         List<BOMLinkViewDTO> directChildren = bomLinkDelegator.find(queryRequestVo, new RDMPageVO());
-        
+
         if (directChildren != null && !directChildren.isEmpty()) {
             bomList.addAll(directChildren);
             for (BOMLinkViewDTO child : directChildren) {
@@ -425,7 +425,7 @@ public class BomService implements IBomService {
             }
         }
     }
-    
+
     private List<BOMLinkViewDTO> bomList;
 
     @Override
@@ -440,10 +440,10 @@ public class BomService implements IBomService {
         // 设置ID以便更新特定BOM链接
         updateDTO.setId(bomLinkId); // 假设有setId方法，需根据实际DTO结构调整
         BOMLinkViewDTO viewDTO = bomLinkDelegator.update(updateDTO);
-        
+
         // 更新参考标识符
-        if (updateVO.getBomUsesOccurrence() != null && 
-            updateVO.getBomUsesOccurrence().getReferenceDesignator() != null) {
+        if (updateVO.getBomUsesOccurrence() != null &&
+                updateVO.getBomUsesOccurrence().getReferenceDesignator() != null) {
             logger.info("BomService.updateBomLink - 更新参考标识符");
             QueryRequestVo queryRequestVo = new QueryRequestVo();
             QueryCondition queryCondition = new QueryCondition();
@@ -451,7 +451,7 @@ public class BomService implements IBomService {
             queryCondition.addCondition("bomLink.id", ConditionType.EQUAL, bomLinkId);
             queryRequestVo.setFilter(queryCondition);
             List<BOMUsesOccurrenceViewDTO> occurrences = bomUsesOccurrenceDelegator.find(queryRequestVo, new RDMPageVO());
-            
+
             for (BOMUsesOccurrenceViewDTO occurrence : occurrences) {
                 BOMUsesOccurrenceUpdateDTO occurrenceUpdateDTO = new BOMUsesOccurrenceUpdateDTO();
                 occurrenceUpdateDTO.setId(occurrence.getId());
@@ -459,7 +459,7 @@ public class BomService implements IBomService {
                 bomUsesOccurrenceDelegator.update(occurrenceUpdateDTO);
             }
         }
-        
+
         logger.info("BomService.updateBomLink - 更新BOM关系成功，BOM链接ID: {}", bomLinkId);
         // 构建符合初始任务描述的响应结构
         Map<String, Object> data = new HashMap<>();
@@ -482,7 +482,7 @@ public class BomService implements IBomService {
         queryCondition.addCondition("bomLink.id", ConditionType.EQUAL, bomLinkId);
         queryRequestVo.setFilter(queryCondition);
         List<BOMUsesOccurrenceViewDTO> occurrences = bomUsesOccurrenceDelegator.find(queryRequestVo, new RDMPageVO());
-        
+
         if (occurrences != null) {
             for (BOMUsesOccurrenceViewDTO occurrence : occurrences) {
                 PersistObjectIdModifierDTO occurrenceDeleteDTO = new PersistObjectIdModifierDTO();
@@ -490,7 +490,7 @@ public class BomService implements IBomService {
                 bomUsesOccurrenceDelegator.delete(occurrenceDeleteDTO);
             }
         }
-        
+
         // 再删除BOM链接
         PersistObjectIdModifierDTO deleteDTO = new PersistObjectIdModifierDTO();
         deleteDTO.setId(bomLinkId);
@@ -510,12 +510,12 @@ public class BomService implements IBomService {
             sourceRef.setId(batchCreateVO.getSourceVersionId());
             sourceRef.setClazz("PartVersion"); // 根据参考实现设置，需根据实际类名调整
             dto.setSource(sourceRef);
-            
+
             ObjectReferenceParamDTO targetRef = new ObjectReferenceParamDTO();
             targetRef.setId(item.getTargetMasterId());
             targetRef.setClazz("PartMaster"); // 根据参考实现设置，需根据实际类名调整
             dto.setTarget(targetRef);
-            
+
             dto.setQuantity(new BigDecimal(item.getQuantity().toString()));
             if (item.getSequenceNumber() != null) {
                 dto.setSequenceNumber(item.getSequenceNumber());
@@ -547,7 +547,7 @@ public class BomService implements IBomService {
         queryCondition.setJoiner("and");
         queryCondition.addCondition("target.id", ConditionType.EQUAL, queryVO.getMasterId());
         queryRequestVo.setFilter(queryCondition);
-        
+
         // 设置分页参数，如果需要
         RDMPageVO pageVO = new RDMPageVO();
         // 获取零件使用位置数据
@@ -560,11 +560,11 @@ public class BomService implements IBomService {
             // 非递归查询，仅获取直接父零件
             whereUsedList = bomLinkDelegator.find(queryRequestVo, pageVO);
         }
-        
+
         if (whereUsedList == null) {
             whereUsedList = new ArrayList<>();
         }
-        
+
         logger.info("BomService.getWhereUsed - 查询零件使用位置完成，找到 {} 条记录", whereUsedList.size());
         // 构建符合初始任务描述的响应结构
         List<Map<String, Object>> data = new ArrayList<>();
@@ -611,7 +611,7 @@ public class BomService implements IBomService {
         }
         return new ReturnResult(200, "查询成功", data);
     }
-    
+
     /**
      * 递归获取所有上层父零件的BOM链接
      * @param targetId 目标ID
@@ -623,14 +623,14 @@ public class BomService implements IBomService {
             return; // 避免循环引用
         }
         visitedTargets.add(targetId);
-        
+
         QueryRequestVo queryRequestVo = new QueryRequestVo();
         QueryCondition queryCondition = new QueryCondition();
         queryCondition.setJoiner("and");
         queryCondition.addCondition("target.id", ConditionType.EQUAL, targetId);
         queryRequestVo.setFilter(queryCondition);
         List<BOMLinkViewDTO> directParents = bomLinkDelegator.find(queryRequestVo, new RDMPageVO());
-        
+
         if (directParents != null && !directParents.isEmpty()) {
             whereUsedList.addAll(directParents);
             for (BOMLinkViewDTO parent : directParents) {

@@ -1,0 +1,334 @@
+现在需要你完成以下需求：
+### 1. 创建BOM关系
+**接口地址**: `POST /bom-links`
+
+**功能描述**: 创建父子零件的BOM使用关系
+
+**请求体**:
+```json
+{
+  "bomLink": {
+    "source": 2001,
+    "target": 1002,
+    "quantity": 4.0,
+    "sequenceNumber": 10
+  },
+  "bomUsesOccurrence": {
+    "referenceDesignator": "R1,R2,R3,R4"
+  }
+}
+```
+
+**请求参数说明**:
+**bomLink对象（BOMLink关系实体属性）**:
+- `source`: 源实体，参考对象指向Part版本ID（必填）
+- `target`: 目标实体，参考对象指向PartMaster主对象ID（必填）
+- `quantity`: 使用数量，浮点型，长度10（必填）
+- `sequenceNumber`: 行号，长整型（可选，自动生成）
+
+**bomUsesOccurrence对象（BOMUsesOccurrence实体属性）**:
+- `referenceDesignator`: 位号名称，文本类型，最大长度500（可选）
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "BOM关系创建成功",
+  "data": {
+    "bomLinkId": 3001,
+    "sourceVersionId": 2001,
+    "targetMasterId": 1002,
+    "quantity": 4.0,
+    "sequenceNumber": 10,
+    "createTime": "2025-01-03 15:00:00"
+  }
+}
+```
+
+### 2. 查询BOM结构树
+**接口地址**: `GET /parts/{versionId}/bom-tree`
+
+**功能描述**: 获取指定Part版本的完整BOM树状结构
+
+**路径参数**:
+- `versionId`: Part版本ID
+
+**请求参数**:
+- `levels`: 展开层级，默认无限制（可选）
+- `includeQty`: 是否包含数量信息，默认true（可选）
+
+**请求示例**: `GET /parts/2001/bom-tree?levels=3&includeQty=true`
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "data": {
+    "rootPart": {
+      "versionId": 2001,
+      "masterId": 1001,
+      "number": "PART20250101001",
+      "name": "主控板PCB001",
+      "version": "A",
+      "iteration": 2
+    },
+    "bomTree": [
+      {
+        "bomLinkId": 3001,
+        "level": 1,
+        "sequenceNumber": 10,
+        "quantity": 4.0,
+        "referenceDesignator": "R1,R2,R3,R4",
+        "targetPart": {
+          "masterId": 1002,
+          "number": "PART20250101002",
+          "name": "电阻器RES001",
+          "currentVersion": "A"
+        },
+        "children": []
+      },
+      {
+        "bomLinkId": 3002,
+        "level": 1, 
+        "sequenceNumber": 20,
+        "quantity": 2.0,
+        "referenceDesignator": "C1,C2",
+        "targetPart": {
+          "masterId": 1003,
+          "number": "PART20250101003", 
+          "name": "电容器CAP001",
+          "currentVersion": "A"
+        },
+        "children": [
+          {
+            "bomLinkId": 3003,
+            "level": 2,
+            "sequenceNumber": 10,
+            "quantity": 1.0,
+            "referenceDesignator": "DI1",
+            "targetPart": {
+              "masterId": 1004,
+              "number": "PART20250101004",
+              "name": "电介质材料",
+              "currentVersion": "A"
+            },
+            "children": []
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 3. 查询BOM清单
+**接口地址**: `GET /parts/{versionId}/bom-list`
+
+**功能描述**: 获取指定Part版本的平面BOM清单
+
+**路径参数**:
+- `versionId`: Part版本ID
+
+**请求参数**:
+- `recursive`: 是否递归查询所有层级，默认true（可选）
+- `format`: 输出格式，csv/json，默认json（可选）
+
+**请求示例**: `GET /parts/2001/bom-list?recursive=true`
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询BOM清单成功",
+  "data": {
+    "summary": {
+      "totalItems": 6,
+      "totalQuantity": 12.0,
+      "maxLevel": 2
+    },
+    "items": [
+      {
+        "level": 1,
+        "sequenceNumber": 10,
+        "partNumber": "PART20250101002",
+        "partName": "电阻器RES001",
+        "quantity": 4.0,
+        "unitQuantity": 4.0,
+        "referenceDesignator": "R1,R2,R3,R4",
+        "source": "Buy",
+        "description": "0.25W 1kΩ 精密电阻器"
+      },
+      {
+        "level": 1,
+        "sequenceNumber": 20,
+        "partNumber": "PART20250101003",
+        "partName": "电容器CAP001", 
+        "quantity": 2.0,
+        "unitQuantity": 2.0,
+        "referenceDesignator": "C1,C2",
+        "source": "Buy",
+        "description": "100uF 电解电容器"
+      },
+      {
+        "level": 2,
+        "sequenceNumber": 10,
+        "partNumber": "PART20250101004",
+        "partName": "电介质材料",
+        "quantity": 2.0,
+        "unitQuantity": 1.0,
+        "referenceDesignator": "DI1",
+        "source": "Make",
+        "description": "高性能电介质材料"
+      }
+    ]
+  }
+}
+```
+
+### 4. 更新BOM关系
+**接口地址**: `PUT /bom-links/{bomLinkId}`
+
+**功能描述**: 更新BOM关系的数量或位号信息
+
+**路径参数**:
+- `bomLinkId`: BOM关系ID
+
+**请求体**:
+```json
+{
+  "bomLink": {
+    "quantity": 6.0,
+    "sequenceNumber": 15
+  },
+  "bomUsesOccurrence": {
+    "referenceDesignator": "R1,R2,R3,R4,R5,R6"
+  }
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "BOM关系更新成功",
+  "data": {
+    "bomLinkId": 3001,
+    "quantity": 6.0,
+    "sequenceNumber": 15,
+    "lastUpdateTime": "2025-01-03 16:30:00"
+  }
+}
+```
+
+### 5. 删除BOM关系
+**接口地址**: `DELETE /bom-links/{bomLinkId}`
+
+**功能描述**: 删除指定的BOM使用关系
+
+**路径参数**:
+- `bomLinkId`: BOM关系ID
+
+**请求示例**: `DELETE /bom-links/3001`
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "BOM关系删除成功",
+  "data": null
+}
+```
+
+### 6. 批量创建BOM关系
+**接口地址**: `POST /bom-links/batch`
+
+**功能描述**: 批量创建多个BOM关系
+
+**请求体**:
+```json
+{
+  "sourceVersionId": 2001,
+  "bomItems": [
+    {
+      "targetMasterId": 1002,
+      "quantity": 4.0,
+      "sequenceNumber": 10,
+      "referenceDesignator": "R1,R2,R3,R4"
+    },
+    {
+      "targetMasterId": 1003,
+      "quantity": 2.0,
+      "sequenceNumber": 20,
+      "referenceDesignator": "C1,C2"
+    },
+    {
+      "targetMasterId": 1004,
+      "quantity": 1.0,
+      "sequenceNumber": 30,
+      "referenceDesignator": "U1"
+    }
+  ]
+}
+```
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "批量创建BOM关系成功",
+  "data": {
+    "successCount": 3,
+    "failCount": 0,
+    "createdBomLinks": [3001, 3002, 3003]
+  }
+}
+```
+
+### 7. 查询Part的父级使用情况
+**接口地址**: `GET /parts/{masterId}/where-used`
+
+**功能描述**: 查询指定Part被哪些父级Part使用
+
+**路径参数**:
+- `masterId`: Part主对象ID
+
+**请求参数**:
+- `recursive`: 是否递归查询，默认false（可选）
+
+**请求示例**: `GET /parts/1002/where-used?recursive=true`
+
+**响应示例**:
+```json
+{
+  "code": 200,
+  "message": "查询成功",
+  "data": [
+    {
+      "bomLinkId": 3001,
+      "parentPart": {
+        "masterId": 1001,
+        "number": "PART20250101001",
+        "name": "主控板PCB001",
+        "currentVersion": "A"
+      },
+      "quantity": 4.0,
+      "referenceDesignator": "R1,R2,R3,R4",
+      "level": 1
+    },
+    {
+      "bomLinkId": 3005,
+      "parentPart": {
+        "masterId": 1005,
+        "number": "PART20250101005",
+        "name": "电路模块MOD001",
+        "currentVersion": "A"
+      },
+      "quantity": 8.0,
+      "referenceDesignator": "R10-R17",
+      "level": 1
+    }
+  ]
+}
+```
+注意，在项目中，Huaweiminibom目录下是我们的项目，而在项目中的resources里有我们需要的sdk，请使用这些sdk完成需求。此外，在“华为实训”目录下是一种实现方法，你可以参考它的实现

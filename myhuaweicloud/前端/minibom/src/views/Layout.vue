@@ -19,7 +19,7 @@
               <el-icon><Promotion /></el-icon><span>分类管理</span>
             </el-menu-item>
             <el-menu-item index="/layout/part">
-              <el-icon><Document /></el-icon><span>Part</span>
+              <el-icon><Document /></el-icon><span>Part&BOM管理</span>
             </el-menu-item>
             <!-- 在这里可以添加更多菜单项 -->
           </el-sub-menu>

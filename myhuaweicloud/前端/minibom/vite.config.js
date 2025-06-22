@@ -13,10 +13,15 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        //localhost:8080
+        target: 'http://localhost:8080', // 替换为你的后端服务地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
+  },
+  esbuild: {
+    // 在生产构建时移除console语句
+    drop: ['console', 'debugger']
   }
 })

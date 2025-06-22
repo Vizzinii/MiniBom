@@ -4,6 +4,7 @@ import Layout from '@/views/Layout.vue'
 import Attribute from '@/views/Attribute.vue'
 import Classification from '@/views/Classification.vue'
 
+
 const routes = [
   { path: '/login', component: Login },
   {
@@ -13,7 +14,9 @@ const routes = [
     children: [
       { path: 'attribute', component: Attribute },
       { path: 'classification', component: Classification },
-      { path: 'part', component: () => import('@/views/Part.vue') }
+      { path: 'part', component: () => import('@/views/Part.vue') },
+      { path: 'bom', redirect: '/layout/part' } // BOM功能已集成到Part管理中
+   
       // 之后可以添加更多子路由，如 bom, category 等
     ]
   },

@@ -66,19 +66,8 @@
                     <el-button type="primary" @click="onSubmit">确认</el-button>
                 </span>
             </template>
-        </el-dialog>
-
-        <!-- 关联属性 对话框 (统一列表，已关联默认勾选) -->
+        </el-dialog>        <!-- 关联属性 对话框 (统一列表，已关联默认勾选) -->
         <el-dialog title="关联属性" v-model="linkDialogVisible" width="60%">
-            <!-- 测试标题：显示当前状态 -->
-            <div style="background: #f0f9ff; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                <h4 style="color: #1890ff; margin: 0;">🔧 调试信息面板</h4>
-                <p style="margin: 5px 0;">总属性数量: {{ allAttributesList.length }}</p>
-                <p style="margin: 5px 0;">已关联属性数量: {{ currentLinkedAttributeIds.length }}</p>
-                <p style="margin: 5px 0;">当前选中数量: {{ selectedAttributeIds.length }}</p>
-                <p style="margin: 5px 0;">已关联的属性ID: {{ currentLinkedAttributeIds.join(', ') || '无' }}</p>
-            </div>
-            
             <div class="attribute-list-container">
                 <el-tag v-if="allAttributesList.length === 0" type="info">暂无可用属性</el-tag>
                 <el-checkbox-group v-model="selectedAttributeIds">
@@ -261,16 +250,11 @@ const onLinkAttributes = async (row) => {
         // 设置所有属性列表
         allAttributesList.value = allAttrRes || [];
         
-        // 设置已关联的属性ID为默认选中状态
-        const linkedIds = classificationDetailRes?.attributes?.map(attr => attr.id) || [];
+        // 设置已关联的属性ID为默认选中状态        const linkedIds = classificationDetailRes?.attributes?.map(attr => attr.id) || [];
         selectedAttributeIds.value = [...linkedIds];
         
         // 保存已关联的属性ID，用于后续计算新增的属性
         currentLinkedAttributeIds.value = [...linkedIds];
-        
-        console.log('所有属性:', allAttributesList.value);
-        console.log('已关联属性ID:', linkedIds);
-        console.log('默认选中ID:', selectedAttributeIds.value);
         
     } catch (error) {
         console.error("获取属性或分类详情失败", error);
@@ -289,17 +273,10 @@ const onLinkSubmit = async () => {
         ElMessage.info('没有新的属性需要关联');
         linkDialogVisible.value = false;
         return;
-    }
-
-    const data = {
+    }    const data = {
         classificationId: currentClassificationId.value,
         attributeIds: newAttributeIds
     };
-
-    console.log('已关联的属性ID:', currentLinkedAttributeIds.value);
-    console.log('当前选中的属性ID:', selectedAttributeIds.value);
-    console.log('新增的属性ID:', newAttributeIds);
-    console.log('提交的关联数据:', data);
 
     try {
         await classificationLinkAttrService(data);

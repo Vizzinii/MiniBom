@@ -1,0 +1,897 @@
+教程链接：https://codelabs.developer.huaweicloud.com/codelabs/samples/d26d2842cd9b4ece9ddf4cacc14f38e9#id-9722165766753641
+
+3、前置条件
+1、已注册华为云，并完成实名认证。
+2、已开通iDME设计态服务和订购iDME数据建模引擎。
+3、已经在iDME设计态建模、发布应用，并且将iDME应用部署到了数据建模引擎上。
+4、具备开发环境，支持Java JDK 1.8及以上版本。
+4、客户端SDK包结构及DTO介绍
+客户端SDK包下载
+
+应用中心下载SDK
+
+注意事项
+
+设计态每次修改模型重新发布应用后，需要重新下载Jar包使用。
+Jar包主要用于协助开发者快速构建上层应用，非必须使用。
+SDK包结构说明
+
+|--- core-sdk-api-1.0.0-SNAPSHOT（包含接口的入参、出参、工具类等）
+|--- rdm-common-1.0.0-SNAPSHOT：包含数据建模引擎（xDM Foundation，简称xDM-F）的公共类。
+|--- rdm-delegate-1.0.0-SNAPSHOT：包含代理请求iDME应用运行态的封装类。
+|--- 应用名称.api-1.0.0-optimization-SNAPSHOT：包含用户模型生成的代码（客户端），例如entity、DTO、service、delegator等相关代码。
+     |--- com.huawei.innovation.rdm.应用名称：用户模型生成代码。
+          |--- bean：生成的实体对象。
+               |--- entity：数据实体。
+               |--- enumerate：枚举。
+               |--- interfaces：接口模型。
+               |--- relation：关系实体。
+          |--- delegator：模型的代理请求，使用调用代码函数的方式代替调API。
+          |--- dto：数据传输实体。
+               |--- entity：数据实体。
+               |--- relation：关系实体。
+          |--- service：模型服务层定义，公有云版本仅做参考使用。
+     |--- com.huawei.innovation.rdm.xdm：系统模型生成代码。
+          |--- bean
+          |--- delegator
+          |--- dto
+          |--- service
+|--- 应用名称.impl-1.0.0-optimization-SNAPSHOT：包含用户模型实现的功能代码（服务端）。公有云版本不能引入此包，仅做参考。
+|--- 应用名称.controller.api-1.0.0-{应用环境标识}-SNAPSHOT：包含用户模型生成的controller API代码（客户端）。
+     |--- com.huawei.innovation.rdm.应用名称：用户模型生成Controller。
+     |--- com.huawei.innovation.rdm.xdm：系统模型生成Controller。
+|--- 应用名称.controller.impl-1.0.0-{应用环境标识}-SNAPSHOT：包含用户模型生成的controller实现类代码（客户端）。如果您已在华为云上部署应用，生成iDME应用运行态，安装SDK时需忽略此JAR包。
+     |--- com.huawei.innovation.rdm.应用名称：用户模型生成Controller。
+     |--- com.huawei.innovation.rdm.xdm：系统模型生成Controller。
+|--- 应用名称.ext.api-1.0.0-optimization-SNAPSHOT：包含用户模型中系统版本管理功能适配，用于兼容DDS或RDS分别提供的系统版本管理功能。
+DTO对象说明
+
+xxxCreateDTO：创建数据实例时使用的数据传输实体，用于创建接口（create/batchCreate）入参。
+xxxHistoryViewDTO：数据实例历史记录实体数据传输实体，用于系统版本查询接口（queryHistoryData）返回接收对象。
+xxxListViewDTO：基础属性视图数据传输实体，用于基础属性查询接口（list）返回接收对象。
+xxxQueryViewDTO：列表属性视图数据传输实体，用于列表属性查询接口（query）返回接收对象。
+xxxSaveDTO：执行数据实例保存时使用的数据传输实体，用于保存接口（save）入参。
+xxxSaveAllDTO：批量执行数据实例保存时使用的数据传输实体，用于批量保存接口（saveAll）入参。
+xxxSaveAsDTO：另存为数据实例时使用的数据传输实例，用于另存为接口（saveAs）入参。
+xxxUpdateDTO：更新数据实例时使用的数据传输实体，用于更新接口（update）、批量更新接口（batchUpdate）、条件更新接口（updateByCondition）入参。
+xxxViewDTO：实例属性视图传输实体，用于需要全量返回数据实例属性接口的返回接收对象，如创建/更新等。
+5、客户端SDK安装示例
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>2.7.12</version>
+    </parent>
+
+    <artifactId>idme-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <idme.jar.path>D:/project/iDME-SDK/lib</idme.jar.path>
+        <idme.app.name>idmeclassicapi</idme.app.name>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.huawei.xdm</groupId>
+            <artifactId>core-sdk-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${idme.jar.path}/core-sdk-api-1.0.0-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.huawei.xdm</groupId>
+            <artifactId>rdm-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${idme.jar.path}/rdm-common-1.0.0-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.huawei.xdm</groupId>
+            <artifactId>rdm-delegate</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${idme.jar.path}/rdm-delegate-1.0.0-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.huawei.xdm</groupId>
+            <artifactId>${idme.app.name}.api</artifactId>
+            <version>1.0.0-optimization-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${idme.jar.path}/${idme.app.name}.api-1.0.0-optimization-SNAPSHOT.jar</systemPath>
+        </dependency>
+    </dependencies>
+</project>
+说明
+
+需要将properties标签中的参数替换为自己的参数。
+
+idme.jar.path：下载jar包的绝对路径。
+idme.app.name：应用名称全小写。
+6、代码示例
+本次示例的模型信息：
+
+模型基本信息
+
+模型属性信息
+
+说明
+
+以下代码示例展示三种方式构建iDME全量数据服务API代理，仅供参考，可以混合使用。
+
+6.1 Delegator使用代码示例
+6.1.1 依赖安装，在章节5的pom树基础上添加以下依赖：
+
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.1.Final</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.13</version>
+</dependency>
+<dependency>
+    <groupId>com.mikesamuel</groupId>
+    <artifactId>json-sanitizer</artifactId>
+    <version>1.2.3</version>
+</dependency>
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-core</artifactId>
+    <version>5.6.9.Final</version>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.reflections</groupId>
+    <artifactId>reflections</artifactId>
+    <version>0.10.2</version>
+</dependency>
+<dependency>
+    <groupId>javax.persistence</groupId>
+    <artifactId>javax.persistence-api</artifactId>
+    <version>2.2</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>32.1.2-jre</version>
+</dependency>
+6.1.2 配置文件，需要替换IAM参数和应用信息，application.properties：
+
+delegate.subAppId=rdm_b3f9b7523a6141f4b2d76b92d6595281_app
+delegate.domain=https://dme.cn-north-4.huaweicloud.com
+delegate.domainName={IAM_DOMAIN_NAME}
+delegate.userName={IAM_USERNAME}
+delegate.password={IAM_PASSWORD}
+delegate.endpoint=https://iam.cn-north-4.myhuaweicloud.com
+delegate.regionName=cn-north-4
+delegate.serviceType=services/dynamic
+说明
+
+delegate.subAppId：应用唯一标识URI，组成为rdm_{app_id}_app，可以从运行态的URL中截取。
+delegate.domain：iDME的运行态域名，可以从运行态URL中截取，北京四环境保持默认即可。
+delegate.domainName：IAM账号。
+delegate.userName：IAM用户名。
+delegate.password：IAM密码。
+delegate.endpoint：IAM域名，后续获取Token使用，北京四环境保持默认即可。
+delegate.regionName：局域名，北京四为cn-north-4。
+delegate.serviceType：服务uri类型，默认保持为services/dynamic即可。
+6.1.3 RestTemplate配置，Delegator基于RestTemplate实现，必须注入一个自定义RestTemplate，可添加忽略证书校验和代理服务器等配置：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.config;
+
+import com.huawei.innovation.rdm.delegate.exception.RdmDelegateException;
+
+import org.apache.http.HttpHost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+/**
+ * RestTemplate 配置
+ *
+ * @since 2024-04-10
+ */
+@Configuration
+public class RestTemplateConfig {
+    /**
+     * 构建 RestTemplate 对象，忽略证书校验。
+     *
+     * @return RestTemplate 对象
+     */
+    @Bean
+    public RestTemplateBuilder restTemplateBuilder() {
+        return new RestTemplateBuilder();
+    }
+
+    /**
+     * 构建 RestTemplate 对象，忽略证书校验。
+     *
+     * @param builder builder
+     * @return RestTemplate 对象
+     */
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        TrustManager[] trustAllCerts = new TrustManager[] {
+            new X509TrustManager() {
+                /**
+                 * 获取证书颁发者列表
+                 *
+                 * @return 证书颁发者列表
+                 */
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                /**
+                 * 校验客户端证书
+                 *
+                 * @param certs the peer certificate chain
+                 * @param authType the authentication type based on the client certificate
+                 */
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                /**
+                 * 校验服务端证书
+                 *
+                 * @param certs the peer certificate chain
+                 * @param authType the key exchange algorithm used
+                 */
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+        SSLContext sslContext = null;
+        try {
+            sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RdmDelegateException("config.1", e.getMessage());
+        }
+        CloseableHttpClient httpClient = HttpClients.custom()
+            .setSSLContext(sslContext)
+            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+            // 需要替换为自己的代理服务器，如果没有，需要去除
+            .setProxy(new HttpHost("proxy.huawei.com", 8080))
+            .build();
+        HttpComponentsClientHttpRequestFactory customRequestFactory = new HttpComponentsClientHttpRequestFactory();
+        customRequestFactory.setHttpClient(httpClient);
+
+        return builder.requestFactory(() -> customRequestFactory).build();
+    }
+}
+
+6.1.4 调用Delegator接口，DelegatorController.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.controller;
+
+import com.huawei.innovation.rdm.coresdk.basic.enums.ConditionType;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMPageVO;
+import com.huawei.innovation.rdm.idmeclassicapi.delegator.PersistableModelDelegator;
+import com.huawei.innovation.rdm.idmeclassicapi.dto.entity.PersistableModelViewDTO;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * DelegatorController
+ *
+ * @since 2024-04-11
+ */
+@RequestMapping("/delegator")
+@RestController
+public class DelegatorController {
+    /**
+     * 引入PersistableModel模型的Delegator代理类。
+     */
+    @Autowired
+    private PersistableModelDelegator persistableModelDelegator;
+
+    /**
+     * 查询接口，Delegator代理类直接返回ResponseBody中的data部分。
+     *
+     * @return 数据实例列表
+     */
+    @RequestMapping(value = "/find", method = RequestMethod.POST)
+    public List<PersistableModelViewDTO> find() {
+        QueryRequestVo queryRequestVo = new QueryRequestVo();
+        queryRequestVo.addCondition("id", ConditionType.EQUAL, 1);
+        return persistableModelDelegator.find(queryRequestVo, new RDMPageVO(1, 10));
+    }
+}
+
+6.1.5 启动类，DelegatorApiMainApplication.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+/**
+ * 启动类，需要扫描客户端SDK包和用户项目路径包
+ *
+ * @since 2024-04-10
+ */
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.huawei.innovation", "com.idme"})
+public class DelegatorApiMainApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(DelegatorApiMainApplication.class, args);
+    }
+}
+6.2 Feign使用代码示例
+6.2.1 依赖安装，在章节5的pom树基础上添加以下依赖：
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+    <version>3.1.3</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.13</version>
+</dependency>
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.1.Final</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>32.1.2-jre</version>
+</dependency>
+6.2.2 配置文件，需要替换IAM参数和运行态路径，application.properties：
+
+delegate.domainName=${IAM_DOMAIN_NAME:}
+delegate.userName=${IAM_USERNAME:}
+delegate.password=${IAM_PASSWORD:}
+delegate.endpoint=${IAM_ENDPOINT:https://iam.cn-north-4.myhuaweicloud.com}
+delegate.regionName=${REGION_NAME:cn-north-4}
+idme.endpoint=${IDME_ENDPOINT:https://dme.cn-north-4.huaweicloud.com/rdm_b3f9b7523a6141f4b2d76b92d6595281_app/services}
+说明
+
+delegate.domainName：IAM账号。
+delegate.userName：IAM用户名。
+delegate.password：IAM密码。
+delegate.endpoint：IAM域名，后续获取Token使用，北京四环境保持默认即可。
+delegate.regionName：局域名，北京四为cn-north-4。
+idme.endpoint：idme的调用域名，组成结构为https://{Endpoint}/rdm_{appId}_app/services
+6.2.3 RestTemplate配置，需要参照章节6.1.3 配置RestTemplate，我们需要使用Delegator包中的Token获取方法。
+
+6.2.4 Feign配置类，FeignConfig.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.config;
+
+import com.huawei.innovation.rdm.delegate.exception.RdmDelegateException;
+
+import feign.Client;
+
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+/**
+ * feign配置
+ *
+ * @since 2024-04-10
+ */
+@Configuration
+public class FeignConfig {
+    /**
+     * 初始化 feignClient 对象，忽略证书校验
+     *
+     * @return bean对象
+     */
+    @Bean
+    public Client feignClient() {
+        // 如果不涉及代理服务器，需要去除代理服务器配置项，更换实现方式
+        // return new Client.Default(getTrustingSSLSocketFactory(), new NoopHostnameVerifier())
+        return new Client.Proxied(getTrustingSSLSocketFactory(), NoopHostnameVerifier.INSTANCE,
+            new Proxy(Proxy.Type.HTTP, new InetSocketAddress("proxy.huawei.com", 8080)));
+    }
+
+    private SSLSocketFactory getTrustingSSLSocketFactory() {
+        try {
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, getTrustManager(), new SecureRandom());
+            return sslContext.getSocketFactory();
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new RdmDelegateException("config.1", e.getMessage());
+        }
+    }
+
+    private TrustManager[] getTrustManager() {
+        return new TrustManager[] {
+            new X509TrustManager() {
+                /**
+                 * 获取证书颁发者列表
+                 *
+                 * @return 证书颁发者列表
+                 */
+                public X509Certificate[] getAcceptedIssuers() {
+                    return new X509Certificate[0];
+                }
+
+                /**
+                 * 校验客户端证书
+                 *
+                 * @param certs the peer certificate chain
+                 * @param authType the authentication type based on the client certificate
+                 */
+                public void checkClientTrusted(X509Certificate[] certs, String authType) {
+                }
+
+                /**
+                 * 校验服务端证书
+                 *
+                 * @param certs the peer certificate chain
+                 * @param authType the key exchange algorithm used
+                 */
+                public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                }
+            }
+        };
+    }
+}
+
+6.2.5 Token请求头配置，FeignTokenConfig.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.config;
+
+import com.huawei.innovation.rdm.delegate.common.XdmDelegateConsts;
+import com.huawei.innovation.rdm.delegate.service.XdmTokenService;
+
+import feign.RequestInterceptor;
+import feign.RequestTemplate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+
+/**
+ * 配置请求头信息
+ *
+ * @since 2024-04-10
+ */
+@Configuration
+public class FeignTokenConfig implements RequestInterceptor {
+    @Autowired
+    private XdmTokenService tokenService;
+
+    @Override
+    public void apply(RequestTemplate template) {
+        template.header("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+        template.header(XdmDelegateConsts.X_AUTH_TOKEN, tokenService.getToken());
+    }
+}
+
+6.2.6 feign接口类定义，PersistableFeign.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.feign;
+
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMParamVO;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMResultVO;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+/**
+ * 基础服务feign
+ *
+ * @since 2024-04-11
+ */
+@FeignClient(url = "${idme.endpoint}", name = "persistable-service")
+public interface PersistableFeign {
+    /**
+     * 查询接口
+     *
+     * @param modelName 模型名称
+     * @param var1 请求参数
+     * @param pageSize 分页大小
+     * @param curPage 当前页
+     * @return 查询结果
+     */
+    @PostMapping("/dynamic/api/{modelName}/find/{pageSize}/{curPage}")
+    RDMResultVO find(@PathVariable("modelName") String modelName, @RequestBody RDMParamVO<QueryRequestVo> var1,
+        @PathVariable("pageSize") int pageSize, @PathVariable("curPage") int curPage);
+}
+6.2.7 调用feign接口，FeignController.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.controller;
+
+import com.huawei.innovation.rdm.coresdk.basic.enums.ConditionType;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMParamVO;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMResultVO;
+
+import com.idme.feign.PersistableFeign;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * TestController
+ *
+ * @since 2024-04-11
+ */
+@RequestMapping("/feign")
+@RestController
+public class FeignController {
+    @Autowired
+    private PersistableFeign persistableFeign;
+
+    /**
+     * find
+     *
+     * @return 查询结果
+     */
+    @RequestMapping(value = "/find", method = RequestMethod.POST)
+    public RDMResultVO find() {
+        RDMParamVO<QueryRequestVo> var1 = new RDMParamVO<>();
+        QueryRequestVo params = new QueryRequestVo();
+        var1.setParams(params);
+        params.addCondition("id", ConditionType.EQUAL, "1");
+        return persistableFeign.find("PersistableModel", var1, 10, 1);
+    }
+}
+6.2.8 启动类，FeignApiMainApplication.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+
+/**
+ * 启动类
+ *
+ * @since 2024-04-10
+ */
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.huawei.innovation", "com.idme"})
+@EnableFeignClients
+public class FeignApiMainApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(FeignApiMainApplication.class, args);
+    }
+}
+6.3 RestTemplate 使用代码示例
+6.3.1 依赖安装，在章节5的pom树基础上添加以下依赖：
+
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.13</version>
+</dependency>
+<dependency>
+    <groupId>javax.validation</groupId>
+    <artifactId>validation-api</artifactId>
+    <version>2.0.1.Final</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-lang3</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>32.1.2-jre</version>
+</dependency>
+6.3.2 配置文件，application.properties：
+
+delegate.subAppId=rdm_b3f9b7523a6141f4b2d76b92d6595281_app
+delegate.domain=https://dme.cn-north-4.huaweicloud.com
+delegate.domainName={IAM_DOMAIN_NAME}
+delegate.userName={IAM_USERNAME}
+delegate.password={IAM_PASSWORD}
+delegate.endpoint=https://iam.cn-north-4.myhuaweicloud.com
+delegate.regionName=cn-north-4
+delegate.serviceType=services/dynamic
+idme.endpoint=https://dme.cn-north-4.huaweicloud.com/rdm_b3f9b7523a6141f4b2d76b92d6595281_app/services
+6.3.3 配置类，RestTemplate.java，参照章节6.1.3配置。
+
+6.3.4 接口封装类，PersistableRest.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.api;
+
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMParamVO;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMResultVO;
+import com.huawei.innovation.rdm.delegate.common.XdmDelegateConsts;
+import com.huawei.innovation.rdm.delegate.service.XdmTokenService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+/**
+ * 基础服务API封装
+ *
+ * @since 2024-04-11
+ */
+@Service
+public class PersistableRest {
+    @Value("${idme.endpoint}")
+    private String endpoint;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
+    private XdmTokenService tokenService;
+
+    /**
+     * 查询接口
+     *
+     * @param modelName 模型名称
+     * @param body 查询参数
+     * @param pageSize 分页大小
+     * @param curPage 当前页
+     * @return 查询结果
+     */
+    public RDMResultVO find(String modelName, RDMParamVO<QueryRequestVo> body, int pageSize, int curPage) {
+        String url = String.join("/", endpoint, "dynamic/api", modelName, "find", String.valueOf(pageSize),
+            String.valueOf(curPage));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(XdmDelegateConsts.X_AUTH_TOKEN, tokenService.getToken());
+        HttpEntity<RDMParamVO<QueryRequestVo>> request = new HttpEntity<>(body, headers);
+        return restTemplate.postForEntity(url, request, RDMResultVO.class).getBody();
+    }
+}
+6.3.5 调用RestTemplate接口，RestTemplateController.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme.controller;
+
+import com.huawei.innovation.rdm.coresdk.basic.enums.ConditionType;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMParamVO;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMResultVO;
+
+import com.idme.api.PersistableRest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * TestController
+ *
+ * @since 2024-04-11
+ */
+@RequestMapping("/rest")
+@RestController
+public class RestTemplateController {
+    @Autowired
+    private PersistableRest persistableRest;
+
+    /**
+     * find
+     *
+     * @return 查询结果
+     */
+    @RequestMapping(value = "/find", method = RequestMethod.POST)
+    public RDMResultVO find() {
+        RDMParamVO<QueryRequestVo> var1 = new RDMParamVO<>();
+        QueryRequestVo params = new QueryRequestVo();
+        var1.setParams(params);
+        params.addCondition("id", ConditionType.EQUAL, "1");
+        return persistableRest.find("PersistableModel", var1, 10, 1);
+    }
+}
+6.3.6 启动类，FeignApiMainApplication.java：
+
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2024-2024. All rights reserved.
+ */
+
+package com.idme;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+/**
+ * 启动类
+ *
+ * @since 2024-04-10
+ */
+@SpringBootApplication
+@ComponentScan(basePackages = {"com.huawei.innovation", "com.idme"})
+public class RestApiMainApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(RestApiMainApplication.class, args);
+    }
+}
+7、返回结果示例
+7.1 Delegator
+[
+  {
+    "id": "1",
+    "creator": "xdmAdmin",
+    "modifier": "xdmAdmin",
+    "createTime": "2024-02-27T09:23:21.899+00:00",
+    "lastUpdateTime": "2024-02-27T09:23:21.899+00:00",
+    "rdmVersion": 1,
+    "rdmDeleteFlag": 0,
+    "rdmExtensionType": "PersistableModel",
+    "tenant": {
+      "id": "-1",
+      "creator": "xdmAdmin",
+      "modifier": "xdmAdmin",
+      "createTime": "2023-12-01T01:25:21.000+00:00",
+      "lastUpdateTime": "2023-12-01T01:25:21.000+00:00",
+      "rdmVersion": 1,
+      "rdmDeleteFlag": 0,
+      "rdmExtensionType": "Tenant",
+      "tenant": null,
+      "className": "Tenant",
+      "name": "basicTenant",
+      "description": "默认租户",
+      "kiaguid": null,
+      "securityLevel": "internal",
+      "nameEn": null,
+      "code": "basicTenant",
+      "disableFlag": false,
+      "dataSource": "DefaultDataSource"
+    },
+    "className": "PersistableModel",
+    "uniqueKey": "unionKey instance"
+  }
+]
+7.2 Feign/RestTemplate 返回示例
+{
+  "result": "SUCCESS",
+  "data": [
+    {
+      "id": "1",
+      "creator": "xdmAdmin",
+      "modifier": "xdmAdmin",
+      "createTime": "2024-02-27T09:23:21.899+0000",
+      "lastUpdateTime": "2024-02-27T09:23:21.899+0000",
+      "rdmVersion": 1,
+      "rdmDeleteFlag": 0,
+      "rdmExtensionType": "PersistableModel",
+      "tenant": {
+        "id": "-1",
+        "creator": "xdmAdmin",
+        "modifier": "xdmAdmin",
+        "createTime": "2023-12-01T01:25:21.000+0000",
+        "lastUpdateTime": "2023-12-01T01:25:21.000+0000",
+        "rdmVersion": 1,
+        "rdmDeleteFlag": 0,
+        "rdmExtensionType": "Tenant",
+        "tenant": null,
+        "className": "Tenant",
+        "name": "basicTenant",
+        "description": "默认租户",
+        "kiaguid": null,
+        "securityLevel": "internal",
+        "nameEn": null,
+        "code": "basicTenant",
+        "disableFlag": false,
+        "dataSource": "DefaultDataSource"
+      },
+      "className": "PersistableModel",
+      "uniqueKey": "unionKey instance"
+    }
+  ],
+  "errors": [],
+  "pageInfo": {
+    "curPage": 1,
+    "pageSize": 10,
+    "totalRows": 1,
+    "totalPages": 1
+  }
+}

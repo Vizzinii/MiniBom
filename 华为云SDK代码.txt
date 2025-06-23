@@ -1,0 +1,1388 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.xdm.delegator;
+
+import com.huawei.iit.sdk.common.exception.RDMAppException;
+import com.huawei.innovation.rdm.coresdk.basic.dto.GenericLinkBatchQueryDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.GenericLinkQueryDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.GenericLinkTypeDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.GenericLinkTypeModifierDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.PersistObjectIdDecryptDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.PersistObjectIdModifierDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.PersistObjectIdsDecryptDTO;
+import com.huawei.innovation.rdm.coresdk.basic.dto.PersistObjectIdsModifierDTO;
+import com.huawei.innovation.rdm.coresdk.basic.util.XDMDelegatorJsonUtil;
+import com.huawei.innovation.rdm.coresdk.basic.vo.DeleteByConditionVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestSelectedVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestStaticsVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.QueryRequestVo;
+import com.huawei.innovation.rdm.coresdk.basic.vo.RDMPageVO;
+import com.huawei.innovation.rdm.coresdk.basic.vo.UpdateByConditionVo;
+import com.huawei.innovation.rdm.coresdk.historymgmt.vo.CompareVersionVO;
+import com.huawei.innovation.rdm.coresdk.historymgmt.vo.MongPageRequest;
+import com.huawei.innovation.rdm.coresdk.historymgmt.vo.StatisticsPVO;
+import com.huawei.innovation.rdm.coresdk.historymgmt.vo.StatisticsRVO;
+import com.huawei.innovation.rdm.coresdk.transactionapi.bean.TransactionDelegatorDto;
+import com.huawei.innovation.rdm.delegate.exception.RdmDelegateException;
+import com.huawei.innovation.rdm.delegate.service.XDMDelegatorService;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkCreateDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkHistoryViewDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkListViewDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkQueryViewDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkSaveAllDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkSaveAsDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkSaveDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkUpdateDTO;
+import com.huawei.innovation.rdm.xdm.dto.relation.EXADefinitionLinkViewDTO;
+import com.huawei.innovation.rdm.xdm.service.IEXADefinitionLinkService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
+import java.util.Objects;
+import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+@Service
+public class EXADefinitionLinkDelegator {
+    @Autowired
+    XDMDelegatorService delegatorService;
+    @Autowired(
+        required = false
+    )
+    IEXADefinitionLinkService iEXADefinitionLinkService;
+    private String uri = "rdm/common/api";
+    private String moduleName = "EXADefinitionLink";
+    private String pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    public EXADefinitionLinkDelegator() {
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int logicalDeleteByCondition(DeleteByConditionVo dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "logicalDeleteByCondition", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.logicalDeleteByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> find(QueryRequestVo dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "find", dto, pageVO);
+            List list7214 = (List)obj;
+            return CollectionUtils.isEmpty(list7214) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list7214, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.find(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkListViewDTO> list(QueryRequestVo dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "list", dto, pageVO);
+            List list1572 = (List)obj;
+            return CollectionUtils.isEmpty(list1572) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list1572, EXADefinitionLinkListViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.list(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchUpdate(@Valid List<EXADefinitionLinkUpdateDTO> dtoList) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchUpdate", dtoList);
+            List list7210 = (List)obj;
+            return CollectionUtils.isEmpty(list7210) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list7210, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchUpdate(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public Integer deleteTarget(GenericLinkTypeModifierDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "deleteTarget", dto);
+            return CollectionUtils.isEmpty((List)obj) ? null : (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.deleteTarget(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> queryRelationship(GenericLinkQueryDTO dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryRelationship", dto, pageVO, transactionHeaderParamName.toHeaders());
+            List list8458 = (List)obj;
+            return CollectionUtils.isEmpty(list8458) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list8458, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.queryRelationship(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchGet(PersistObjectIdsDecryptDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchGet", dto);
+            List list6828 = (List)obj;
+            return CollectionUtils.isEmpty(list6828) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list6828, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchGet(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List queryTarget(GenericLinkTypeDTO dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryTarget", dto, pageVO, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.queryTarget(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> queryRelationship(GenericLinkQueryDTO dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryRelationship", dto, pageVO);
+            List list7305 = (List)obj;
+            return CollectionUtils.isEmpty(list7305) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list7305, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.queryRelationship(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public long count(QueryRequestVo dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "count", dto, transactionHeaderParamName.toHeaders());
+            return Long.parseLong(((List)obj).get(0).toString());
+        } else {
+            return this.iEXADefinitionLinkService.count(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO create(@Valid EXADefinitionLinkCreateDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "create", dto);
+            List list2722 = (List)obj;
+            if (CollectionUtils.isEmpty(list2722)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list2722, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.create(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO get(PersistObjectIdDecryptDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "get", dto, transactionHeaderParamName.toHeaders());
+            List list3903 = (List)obj;
+            if (CollectionUtils.isEmpty(list3903)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list3903, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.get(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List queryTarget(GenericLinkTypeDTO dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryTarget", dto, pageVO);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.queryTarget(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List batchQueryRelatedObjects(GenericLinkBatchQueryDTO dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchQueryRelatedObjects", dto, pageVO, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.batchQueryRelatedObjects(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkHistoryViewDTO> queryHistoryData(MongPageRequest dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryHistoryData", dto, pageVO);
+            List list0149 = (List)obj;
+            return CollectionUtils.isEmpty(list0149) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list0149, EXADefinitionLinkHistoryViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.queryHistoryData(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List select(QueryRequestSelectedVo dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "select", dto, pageVO, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.select(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO saveAs(@Valid EXADefinitionLinkSaveAsDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "saveAs", dto, transactionHeaderParamName.toHeaders());
+            List list4601 = (List)obj;
+            if (CollectionUtils.isEmpty(list4601)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list4601, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.saveAs(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List queryRelatedObjects(GenericLinkQueryDTO dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryRelatedObjects", dto, pageVO, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.queryRelatedObjects(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchCreate(@Valid List<EXADefinitionLinkCreateDTO> dtoList) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchCreate", dtoList);
+            List list0504 = (List)obj;
+            return CollectionUtils.isEmpty(list0504) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list0504, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchCreate(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List staticsPage(QueryRequestStaticsVo dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "staticsPage", dto, pageVO);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.staticsPage(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO update(@Valid EXADefinitionLinkUpdateDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "update", dto);
+            List list2183 = (List)obj;
+            if (CollectionUtils.isEmpty(list2183)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list2183, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.update(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public long count(QueryRequestVo dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "count", dto);
+            return Long.parseLong(((List)obj).get(0).toString());
+        } else {
+            return this.iEXADefinitionLinkService.count(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int batchLogicalDelete(PersistObjectIdsModifierDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchLogicalDelete", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.batchLogicalDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO create(@Valid EXADefinitionLinkCreateDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "create", dto, transactionHeaderParamName.toHeaders());
+            List list4017 = (List)obj;
+            if (CollectionUtils.isEmpty(list4017)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list4017, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.create(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public Integer deleteTarget(GenericLinkTypeModifierDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "deleteTarget", dto, transactionHeaderParamName.toHeaders());
+            return CollectionUtils.isEmpty((List)obj) ? null : (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.deleteTarget(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int deleteByCondition(DeleteByConditionVo dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "deleteByCondition", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.deleteByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List statics(QueryRequestStaticsVo dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "statics", dto);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.statics(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int logicalDelete(PersistObjectIdModifierDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "logicalDelete", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.logicalDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> find(QueryRequestVo dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "find", dto, pageVO, transactionHeaderParamName.toHeaders());
+            List list7848 = (List)obj;
+            return CollectionUtils.isEmpty(list7848) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list7848, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.find(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List batchQueryRelatedObjects(GenericLinkBatchQueryDTO dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchQueryRelatedObjects", dto, pageVO);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.batchQueryRelatedObjects(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO update(@Valid EXADefinitionLinkUpdateDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "update", dto, transactionHeaderParamName.toHeaders());
+            List list1802 = (List)obj;
+            if (CollectionUtils.isEmpty(list1802)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list1802, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.update(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO saveAs(@Valid EXADefinitionLinkSaveAsDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "saveAs", dto);
+            List list6056 = (List)obj;
+            if (CollectionUtils.isEmpty(list6056)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list6056, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.saveAs(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int deleteByCondition(DeleteByConditionVo dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "deleteByCondition", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.deleteByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int batchLogicalDelete(PersistObjectIdsModifierDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchLogicalDelete", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.batchLogicalDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public EXADefinitionLinkViewDTO get(PersistObjectIdDecryptDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "get", dto);
+            List list3682 = (List)obj;
+            if (CollectionUtils.isEmpty(list3682)) {
+                return null;
+            } else {
+                List<EXADefinitionLinkViewDTO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list3682, EXADefinitionLinkViewDTO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (EXADefinitionLinkViewDTO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.get(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchGet(PersistObjectIdsDecryptDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchGet", dto, transactionHeaderParamName.toHeaders());
+            List list2112 = (List)obj;
+            return CollectionUtils.isEmpty(list2112) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list2112, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchGet(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchUpdate(@Valid List<EXADefinitionLinkUpdateDTO> dtoList, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchUpdate", dtoList, transactionHeaderParamName.toHeaders());
+            List list6263 = (List)obj;
+            return CollectionUtils.isEmpty(list6263) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list6263, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchUpdate(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int batchDelete(PersistObjectIdsModifierDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchDelete", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.batchDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int save(@Valid List<EXADefinitionLinkSaveDTO> dtoList) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "save", dtoList);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.save(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> batchCreate(@Valid List<EXADefinitionLinkCreateDTO> dtoList, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchCreate", dtoList, transactionHeaderParamName.toHeaders());
+            List list8205 = (List)obj;
+            return CollectionUtils.isEmpty(list8205) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list8205, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.batchCreate(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public StatisticsRVO statisticsHistoryData(StatisticsPVO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "statisticsHistoryData", dto, transactionHeaderParamName.toHeaders());
+            List list3819 = (List)obj;
+            if (CollectionUtils.isEmpty(list3819)) {
+                return null;
+            } else {
+                List<StatisticsRVO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list3819, StatisticsRVO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (StatisticsRVO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.statisticsHistoryData(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkQueryViewDTO> query(QueryRequestVo dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "query", dto, pageVO, transactionHeaderParamName.toHeaders());
+            List list3833 = (List)obj;
+            return CollectionUtils.isEmpty(list3833) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list3833, EXADefinitionLinkQueryViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.query(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List compareVersion(CompareVersionVO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "compareVersion", dto);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.compareVersion(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkHistoryViewDTO> queryHistoryData(MongPageRequest dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryHistoryData", dto, pageVO, transactionHeaderParamName.toHeaders());
+            List list4844 = (List)obj;
+            return CollectionUtils.isEmpty(list4844) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list4844, EXADefinitionLinkHistoryViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.queryHistoryData(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List statics(QueryRequestStaticsVo dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "statics", dto, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.statics(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkQueryViewDTO> query(QueryRequestVo dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "query", dto, pageVO);
+            List list0908 = (List)obj;
+            return CollectionUtils.isEmpty(list0908) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list0908, EXADefinitionLinkQueryViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.query(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int saveAll(@Valid List<EXADefinitionLinkSaveAllDTO> dtoList, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "saveAll", dtoList, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.saveAll(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int save(@Valid List<EXADefinitionLinkSaveDTO> dtoList, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "save", dtoList, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.save(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public StatisticsRVO statisticsHistoryData(StatisticsPVO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "statisticsHistoryData", dto);
+            List list8165 = (List)obj;
+            if (CollectionUtils.isEmpty(list8165)) {
+                return null;
+            } else {
+                List<StatisticsRVO> viewDTOS = XDMDelegatorJsonUtil.jsonToDTOList(list8165, StatisticsRVO.class, this.pattern);
+                return CollectionUtils.isEmpty(viewDTOS) ? null : (StatisticsRVO)viewDTOS.get(0);
+            }
+        } else {
+            return this.iEXADefinitionLinkService.statisticsHistoryData(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List select(QueryRequestSelectedVo dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "select", dto, pageVO);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.select(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List compareVersion(CompareVersionVO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "compareVersion", dto, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.compareVersion(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int batchDelete(PersistObjectIdsModifierDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "batchDelete", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.batchDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int delete(PersistObjectIdModifierDTO dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "delete", dto, transactionHeaderParamName.toHeaders());
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.delete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> updateByCondition(@Valid UpdateByConditionVo<EXADefinitionLinkUpdateDTO> dto, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "updateByCondition", dto, transactionHeaderParamName.toHeaders());
+            List list1388 = (List)obj;
+            return CollectionUtils.isEmpty(list1388) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list1388, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.updateByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int saveAll(@Valid List<EXADefinitionLinkSaveAllDTO> dtoList) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "saveAll", dtoList);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.saveAll(dtoList);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int delete(PersistObjectIdModifierDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "delete", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.delete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int logicalDeleteByCondition(DeleteByConditionVo dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "logicalDeleteByCondition", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.logicalDeleteByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List queryRelatedObjects(GenericLinkQueryDTO dto, RDMPageVO pageVO) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "queryRelatedObjects", dto, pageVO);
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.queryRelatedObjects(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkViewDTO> updateByCondition(@Valid UpdateByConditionVo<EXADefinitionLinkUpdateDTO> dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "updateByCondition", dto);
+            List list8184 = (List)obj;
+            return CollectionUtils.isEmpty(list8184) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list8184, EXADefinitionLinkViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.updateByCondition(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public int logicalDelete(PersistObjectIdModifierDTO dto) throws RDMAppException {
+        if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "logicalDelete", dto);
+            return (Integer)((List)obj).get(0);
+        } else {
+            return this.iEXADefinitionLinkService.logicalDelete(dto);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List staticsPage(QueryRequestStaticsVo dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "staticsPage", dto, pageVO, transactionHeaderParamName.toHeaders());
+            return (List)obj;
+        } else {
+            return this.iEXADefinitionLinkService.staticsPage(dto, pageVO);
+        }
+    }
+
+    @ApiOperation("EXADefinitionLink")
+    @Operation(
+        summary = "EXADefinitionLink"
+    )
+    public List<EXADefinitionLinkListViewDTO> list(QueryRequestVo dto, RDMPageVO pageVO, TransactionDelegatorDto transactionHeaderParamName) throws RDMAppException {
+        if (Objects.nonNull(this.iEXADefinitionLinkService) && Objects.nonNull(transactionHeaderParamName)) {
+            throw new RdmDelegateException("IIT.61003007", "Local transactions cannot be invoked in unified transaction mode.");
+        } else if (Objects.isNull(this.iEXADefinitionLinkService)) {
+            Object obj = this.delegatorService.invoke(this.uri, this.moduleName, "list", dto, pageVO, transactionHeaderParamName.toHeaders());
+            List list9093 = (List)obj;
+            return CollectionUtils.isEmpty(list9093) ? null : XDMDelegatorJsonUtil.jsonToDTOList(list9093, EXADefinitionLinkListViewDTO.class, this.pattern);
+        } else {
+            return this.iEXADefinitionLinkService.list(dto, pageVO);
+        }
+    }
+}
+
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.xdm.dto.relation;
+
+import com.huawei.innovation.rdm.coresdk.basic.dto.GenericLinkQueryViewDTO;
+import com.huawei.innovation.rdm.xdm.bean.relation.EXADefinitionLink;
+import io.swagger.annotations.ApiModel;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serializable;
+
+@ApiModel("EXADefinitionLinkQueryViewDTO")
+@Schema(
+    name = "EXADefinitionLinkQueryViewDTO"
+)
+public class EXADefinitionLinkQueryViewDTO extends GenericLinkQueryViewDTO implements Serializable {
+    private static final long serialVersionUID = -3833584238198344175L;
+
+    public EXADefinitionLinkQueryViewDTO(EXADefinitionLink entity, boolean decrypt) {
+        super(entity, decrypt);
+    }
+
+    public String toString() {
+        return "EXADefinitionLinkQueryViewDTO()";
+    }
+
+    public EXADefinitionLinkQueryViewDTO() {
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof EXADefinitionLinkQueryViewDTO)) {
+            return false;
+        } else {
+            EXADefinitionLinkQueryViewDTO other = (EXADefinitionLinkQueryViewDTO)o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else {
+                return super.equals(o);
+            }
+        }
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof EXADefinitionLinkQueryViewDTO;
+    }
+
+    public int hashCode() {
+        int result = super.hashCode();
+        return result;
+    }
+}
+
+
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.coresdk.basic.dto;
+
+import com.huawei.innovation.rdm.bean.relation.GenericLink;
+import java.util.Objects;
+
+public class GenericLinkQueryViewDTO extends BasicObjectQueryViewDTO {
+    private ObjectReferenceDTO source;
+    private ObjectReferenceDTO target;
+    private String name;
+    private String description;
+
+    public GenericLinkQueryViewDTO(GenericLink link, boolean isDecrypt) {
+        super(link, isDecrypt);
+        if (Objects.nonNull(link)) {
+            this.setSource(new ObjectReferenceDTO(link.getSource()));
+            this.setTarget(new ObjectReferenceDTO(link.getTarget()));
+        }
+
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public GenericLinkQueryViewDTO() {
+    }
+
+    public ObjectReferenceDTO getSource() {
+        return this.source;
+    }
+
+    public ObjectReferenceDTO getTarget() {
+        return this.target;
+    }
+
+    public void setSource(ObjectReferenceDTO source) {
+        this.source = source;
+    }
+
+    public void setTarget(ObjectReferenceDTO target) {
+        this.target = target;
+    }
+
+    public String toString() {
+        return "GenericLinkQueryViewDTO(source=" + this.getSource() + ", target=" + this.getTarget() + ", name=" + this.getName() + ", description=" + this.getDescription() + ")";
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof GenericLinkQueryViewDTO)) {
+            return false;
+        } else {
+            GenericLinkQueryViewDTO other = (GenericLinkQueryViewDTO)o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else if (!super.equals(o)) {
+                return false;
+            } else {
+                label61: {
+                    Object this$source = this.getSource();
+                    Object other$source = other.getSource();
+                    if (this$source == null) {
+                        if (other$source == null) {
+                            break label61;
+                        }
+                    } else if (this$source.equals(other$source)) {
+                        break label61;
+                    }
+
+                    return false;
+                }
+
+                label54: {
+                    Object this$target = this.getTarget();
+                    Object other$target = other.getTarget();
+                    if (this$target == null) {
+                        if (other$target == null) {
+                            break label54;
+                        }
+                    } else if (this$target.equals(other$target)) {
+                        break label54;
+                    }
+
+                    return false;
+                }
+
+                Object this$name = this.getName();
+                Object other$name = other.getName();
+                if (this$name == null) {
+                    if (other$name != null) {
+                        return false;
+                    }
+                } else if (!this$name.equals(other$name)) {
+                    return false;
+                }
+
+                Object this$description = this.getDescription();
+                Object other$description = other.getDescription();
+                if (this$description == null) {
+                    if (other$description != null) {
+                        return false;
+                    }
+                } else if (!this$description.equals(other$description)) {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof GenericLinkQueryViewDTO;
+    }
+
+    public int hashCode() {
+        int PRIME = true;
+        int result = super.hashCode();
+        Object $source = this.getSource();
+        result = result * 59 + ($source == null ? 43 : $source.hashCode());
+        Object $target = this.getTarget();
+        result = result * 59 + ($target == null ? 43 : $target.hashCode());
+        Object $name = this.getName();
+        result = result * 59 + ($name == null ? 43 : $name.hashCode());
+        Object $description = this.getDescription();
+        result = result * 59 + ($description == null ? 43 : $description.hashCode());
+        return result;
+    }
+
+    public GenericLinkQueryViewDTO(ObjectReferenceDTO source, ObjectReferenceDTO target, String name, String description) {
+        this.source = source;
+        this.target = target;
+        this.name = name;
+        this.description = description;
+    }
+}
+
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
+package com.huawei.innovation.rdm.coresdk.basic.dto;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.huawei.innovation.rdm.coresdk.basic.util.HibernateEntityUtil;
+import com.huawei.innovation.rdm.coresdk.persistence.bean.ObjectReference;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serializable;
+import javax.validation.constraints.NotNull;
+
+@ApiModel
+@Schema
+public class ObjectReferenceParamDTO extends AbstractParamDTO implements Serializable {
+    private static final long serialVersionUID = -5902796605964942652L;
+    @ApiModelProperty(
+        value = "ID",
+        required = true
+    )
+    @Schema(
+        description = "ID",
+        required = true
+    )
+    @JsonSerialize(
+        using = ToStringSerializer.class
+    )
+    private @NotNull Long id;
+    @ApiModelProperty("类名称")
+    @Schema(
+        description = "类名称"
+    )
+    private String clazz;
+    @ApiModelProperty(
+        value = "实体类名",
+        hidden = true
+    )
+    @Schema(
+        description = "实体类名",
+        hidden = true
+    )
+    private String className;
+
+    public ObjectReferenceParamDTO(Long id, String clazz) {
+        this.setId(id);
+        this.setClazz(clazz);
+        if (HibernateEntityUtil.getEntityClass(clazz) != null) {
+            this.className = HibernateEntityUtil.getEntityClass(clazz).getSimpleName();
+        }
+
+    }
+
+    public ObjectReferenceParamDTO(Long id, String clazz, String className) {
+        this.setId(id);
+        this.setClazz(clazz);
+        this.setClassName(className);
+    }
+
+    public ObjectReferenceParamDTO() {
+    }
+
+    public ObjectReference toEntity() {
+        return new ObjectReference(this.id, this.clazz);
+    }
+
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        } else if (!(o instanceof ObjectReferenceParamDTO)) {
+            return false;
+        } else {
+            ObjectReferenceParamDTO other = (ObjectReferenceParamDTO)o;
+            if (!other.canEqual(this)) {
+                return false;
+            } else {
+                label47: {
+                    Object this$id = this.getId();
+                    Object other$id = other.getId();
+                    if (this$id == null) {
+                        if (other$id == null) {
+                            break label47;
+                        }
+                    } else if (this$id.equals(other$id)) {
+                        break label47;
+                    }
+
+                    return false;
+                }
+
+                Object this$clazz = this.getClazz();
+                Object other$clazz = other.getClazz();
+                if (this$clazz == null) {
+                    if (other$clazz != null) {
+                        return false;
+                    }
+                } else if (!this$clazz.equals(other$clazz)) {
+                    return false;
+                }
+
+                Object this$className = this.getClassName();
+                Object other$className = other.getClassName();
+                if (this$className == null) {
+                    if (other$className != null) {
+                        return false;
+                    }
+                } else if (!this$className.equals(other$className)) {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+    }
+
+    protected boolean canEqual(Object other) {
+        return other instanceof ObjectReferenceParamDTO;
+    }
+
+    public int hashCode() {
+        int PRIME = true;
+        int result = 1;
+        Object $id = this.getId();
+        result = result * 59 + ($id == null ? 43 : $id.hashCode());
+        Object $clazz = this.getClazz();
+        result = result * 59 + ($clazz == null ? 43 : $clazz.hashCode());
+        Object $className = this.getClassName();
+        result = result * 59 + ($className == null ? 43 : $className.hashCode());
+        return result;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public String getClazz() {
+        return this.clazz;
+    }
+
+    public String getClassName() {
+        return this.className;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
+    public String toString() {
+        return "ObjectReferenceParamDTO(id=" + this.getId() + ", clazz=" + this.getClazz() + ", className=" + this.getClassName() + ")";
+    }
+}

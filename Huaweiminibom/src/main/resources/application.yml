@@ -1,0 +1,24 @@
+delegate:
+  subAppId: rdm_cdb96b087c144f459732340d436aae3f_app
+  domain: https://dme.cn-north-4.huaweicloud.com
+  domainName: hid_ek93c_f2jacil6o
+  userName: yangyuhang
+  password: 159357hxww
+  endpoint: https://iam.cn-north-4.myhuaweicloud.com
+  regionName: cn-north-4
+  serviceType: publicservices
+  xdmServiceType: publicservices
+
+server:
+  port: 8080
+
+spring:
+  main:
+    banner-mode: off
+
+# ???????
+logging:
+  level:
+    com.huawei.innovation: DEBUG
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.apache.http: DEBUG
